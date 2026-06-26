@@ -226,3 +226,13 @@ a { color: inherit; text-decoration: none; }
 .pub-badge.published { color: #19d36b; border-color: rgba(25,211,107,.5); }
 .pub-badge.accepted { color: #2ad4ff; border-color: rgba(42,212,255,.5); }
 @media (max-width: 560px) { .pub-item { flex-direction: column; gap: .45rem; } }
+
+/* sticky / floating top nav */
+.topbar { position: sticky; top: 0; z-index: 60; flex-wrap: wrap; padding: .5rem 0; margin-bottom: 1.2rem;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  -webkit-backdrop-filter: saturate(150%) blur(10px); backdrop-filter: saturate(150%) blur(10px);
+  border-bottom: 1px solid var(--line); }
+.topnav { display: flex; align-items: center; gap: .2rem 1rem; flex: 1 1 auto; justify-content: center; flex-wrap: wrap; }
+.topnav a { font-family: var(--font-display); font-weight: 600; font-size: .82rem; color: var(--muted); white-space: nowrap; transition: color .15s ease; }
+.topnav a:hover { color: var(--accent); text-shadow: 0 0 8px rgba(255,42,68,.4); }
+@media (max-width: 640px) { .topnav { order: 3; width: 100%; justify-content: flex-start; gap: .9rem; overflow-x: auto; padding-top: .35rem; } }
