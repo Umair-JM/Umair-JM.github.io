@@ -17,6 +17,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- AOS — scroll animations (MIT) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -44,28 +46,41 @@
 
     <!-- ===== Hero ===== -->
     <section class="hero" id="top">
-      <div class="hero-avatar" aria-hidden="true">UJ</div>
-      <h1 class="hero-name">Umair Javaid Manj</h1>
-      <p class="hero-tag">
-        Cybersecurity researcher &amp; educator. PhD candidate in
-        <strong>Health&nbsp;AI</strong> at Auckland University of Technology, building an
-        AI-based biomarker for chronic lower-back pain.
-      </p>
-      <p class="hero-sub">
-        I work where <strong>secure systems</strong>, <strong>applied research</strong> and
-        <strong>teaching</strong> meet — from penetration testing and threat intelligence to
-        course design for 100+ students.
-      </p>
-      <div class="hero-cta">
-        <a class="btn btn-primary" href="mailto:umairjavaidmanj@gmail.com">Get in touch</a>
-        <a class="btn btn-ghost" href="https://github.com/Umair-JM" target="_blank" rel="noopener">GitHub</a>
-        <a class="btn btn-ghost" href="https://linkedin.com/in/umairjm" target="_blank" rel="noopener">LinkedIn</a>
+      <div id="particles" class="particles" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-avatar" aria-hidden="true">UJ</div>
+        <h1 class="hero-name">Umair Javaid Manj</h1>
+        <p class="hero-typed-line">
+          <span class="hero-typed-prefix mono">&gt;</span>
+          <span id="typed" class="hero-typed"></span>
+        </p>
+        <p class="hero-tag">
+          Cybersecurity researcher &amp; educator. PhD candidate in
+          <strong>Health&nbsp;AI</strong> at Auckland University of Technology, building an
+          AI-based biomarker for chronic lower-back pain.
+        </p>
+        <p class="hero-sub">
+          I work where <strong>secure systems</strong>, <strong>applied research</strong> and
+          <strong>teaching</strong> meet — from penetration testing and threat intelligence to
+          course design for 100+ students.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="mailto:umairjavaidmanj@gmail.com">
+            <i data-lucide="mail"></i> Get in touch
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/Umair-JM" target="_blank" rel="noopener">
+            <i data-lucide="github"></i> GitHub
+          </a>
+          <a class="btn btn-ghost" href="https://linkedin.com/in/umairjm" target="_blank" rel="noopener">
+            <i data-lucide="linkedin"></i> LinkedIn
+          </a>
+        </div>
+        <ul class="hero-meta">
+          <li><span class="dot ok" aria-hidden="true"></span> Open to security &amp; academic roles</li>
+          <li><i data-lucide="map-pin" class="meta-ico"></i> Auckland, New Zealand</li>
+          <li><i data-lucide="clock" class="meta-ico"></i> <span id="localTime" class="mono"></span></li>
+        </ul>
       </div>
-      <ul class="hero-meta">
-        <li><span class="dot ok" aria-hidden="true"></span> Open to security &amp; academic roles</li>
-        <li>📍 Auckland, New Zealand</li>
-        <li><span id="localTime" class="mono"></span></li>
-      </ul>
     </section>
 
     <!-- ===== About ===== -->
@@ -314,6 +329,11 @@
     </footer>
   </div>
 
+  <!-- Front-end plugins (all free / open-source, via jsDelivr CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

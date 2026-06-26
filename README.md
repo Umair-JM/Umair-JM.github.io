@@ -5,7 +5,17 @@ Personal portfolio site for **Umair Javaid Manj** — cybersecurity researcher &
 🔗 **Live:** https://umair-jm.github.io
 
 ## Stack
-Plain HTML, CSS and a little vanilla JavaScript — no build step, no dependencies. Hosted on GitHub Pages.
+Plain HTML, CSS and vanilla JavaScript — no build step. Hosted on GitHub Pages.
+A few free, open-source front-end plugins are loaded from the jsDelivr CDN (no accounts, no API keys):
+
+| Plugin | Use | License |
+|---|---|---|
+| [AOS](https://github.com/michalsnik/aos) | Scroll-reveal animations | MIT |
+| [Typed.js](https://github.com/mattboldt/typed.js) | Animated typing in the hero | MIT |
+| [tsParticles](https://github.com/tsparticles/tsparticles) | Security-network background | MIT |
+| [Lucide](https://github.com/lucide-icons/lucide) | SVG icons | ISC |
+
+All degrade gracefully — if a CDN is blocked, the site still renders fully (static text/icons fallback) and respects `prefers-reduced-motion`.
 
 ```
 index.html    # all content / structure

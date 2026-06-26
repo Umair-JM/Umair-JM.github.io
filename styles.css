@@ -85,7 +85,24 @@ a { color: inherit; }
 .theme-toggle:active { transform: scale(.94); }
 
 /* ===== Hero ===== */
-.hero { padding: 2.6rem 0 1.5rem; }
+.hero { position: relative; padding: 2.6rem 0 1.5rem; isolation: isolate; }
+.particles {
+  position: absolute; inset: -1rem -1.25rem 0; z-index: -1;
+  pointer-events: none; opacity: .9;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-typed-line {
+  font-family: "JetBrains Mono", monospace; font-size: .98rem;
+  color: var(--accent); margin: 0 0 .9rem; min-height: 1.4em; letter-spacing: -.01em;
+}
+.hero-typed-prefix { opacity: .7; margin-right: .15rem; }
+.typed-cursor { color: var(--accent); font-weight: 400; }
+
+/* Lucide icon sizing */
+.btn svg { width: 16px; height: 16px; }
+.meta-ico { width: 14px; height: 14px; vertical-align: -2px; color: var(--muted); }
 .hero-avatar {
   width: 64px; height: 64px; border-radius: 18px;
   background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #1d6fb8));
