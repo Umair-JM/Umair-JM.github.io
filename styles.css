@@ -236,3 +236,8 @@ a { color: inherit; text-decoration: none; }
 .topnav a { font-family: var(--font-display); font-weight: 600; font-size: .82rem; color: var(--muted); white-space: nowrap; transition: color .15s ease; }
 .topnav a:hover { color: var(--accent); text-shadow: 0 0 8px rgba(255,42,68,.4); }
 @media (max-width: 640px) { .topnav { order: 3; width: 100%; justify-content: flex-start; gap: .9rem; overflow-x: auto; padding-top: .35rem; } }
+
+.pub-badge.prep { color: var(--faint); border-style: dashed; }
+.pub-feature { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .55rem; }
+.pub-feature a { color: var(--ink); font-size: .92rem; line-height: 1.45; display: inline-block; border-bottom: 1px solid transparent; transition: color .15s ease; }
+.pub-feature a:hover { color: var(--accent); }
