@@ -214,3 +214,15 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* publications page */
+.pub-group { font-family: var(--font-display); font-size: 1.05rem; margin: 1.9rem 0 .2rem; color: var(--accent); }
+.pub-list { list-style: none; padding: 0; margin: 0; }
+.pub-item { padding: .85rem 0; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+.pub-cite { margin: 0; color: var(--ink); font-size: .92rem; line-height: 1.55; }
+.pub-cite strong { color: var(--accent); }
+.pub-cite em { color: var(--muted); }
+.pub-badge { flex: 0 0 auto; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .06em; text-transform: uppercase; padding: .2rem .5rem; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; color: var(--muted); }
+.pub-badge.published { color: #19d36b; border-color: rgba(25,211,107,.5); }
+.pub-badge.accepted { color: #2ad4ff; border-color: rgba(42,212,255,.5); }
+@media (max-width: 560px) { .pub-item { flex-direction: column; gap: .45rem; } }
