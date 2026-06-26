@@ -4,336 +4,169 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Umair Javaid Manj — Cybersecurity Researcher & Educator</title>
-  <meta name="description" content="Umair Javaid Manj — Cybersecurity researcher and educator, PhD candidate in Health AI at Auckland University of Technology. Penetration testing, threat intelligence, network defense, and secure systems research." />
-  <meta name="author" content="Umair Javaid Manj" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Umair Javaid Manj — Cybersecurity Researcher & Educator" />
-  <meta property="og:description" content="Cybersecurity researcher & educator · PhD candidate in Health AI @ AUT." />
+  <meta name="description" content="Umair Javaid Manj — cybersecurity researcher and educator, PhD candidate in Health AI at Auckland University of Technology." />
+  <meta property="og:title" content="Umair Javaid Manj" />
+  <meta property="og:description" content="Cybersecurity researcher & educator · PhD candidate in Health AI." />
   <meta property="og:url" content="https://umair-jm.github.io" />
-
+  <meta property="og:type" content="website" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <!-- AOS — scroll animations (MIT) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@700,800&f[]=zodiak@400,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script src="app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#about">Skip to content</a>
+  <main class="page">
 
-  <div class="wrap">
-    <!-- ===== Top bar ===== -->
+    <!-- Top bar -->
     <header class="topbar">
-      <a class="brand" href="#top">
-        <span class="brand-dot" aria-hidden="true"></span>
-        umair<span class="brand-mono">.manj</span>
-      </a>
-      <nav class="topnav" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#stack">Stack</a>
-        <a href="#work">Work</a>
-        <a href="#certs">Certs</a>
-        <a href="#education">Education</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme">
-        <span class="theme-icon">◐</span>
-      </button>
+      <div class="swatches" role="group" aria-label="Accent colour">
+        <button class="swatch" data-accent="#b04a2f" aria-label="Terracotta"></button>
+        <button class="swatch" data-accent="#4a7c59" aria-label="Olive"></button>
+        <button class="swatch" data-accent="#3b6ea5" aria-label="Blue"></button>
+        <button class="swatch" data-accent="#7a5ea8" aria-label="Violet"></button>
+        <button class="swatch" data-accent="#1a1208" aria-label="Ink"></button>
+      </div>
+      <div class="topbar-right">
+        <button id="modeToggle" class="icon-btn" aria-label="Toggle dark mode" title="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <a class="book-btn" href="mailto:umairjavaidmanj@gmail.com?subject=Let%27s%20talk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Book a call
+        </a>
+      </div>
     </header>
 
-    <!-- ===== Hero ===== -->
-    <section class="hero" id="top">
-      <div id="particles" class="particles" aria-hidden="true"></div>
-      <div class="hero-inner">
-        <div class="hero-avatar" aria-hidden="true">UJ</div>
-        <h1 class="hero-name">Umair Javaid Manj</h1>
-        <p class="hero-typed-line">
-          <span class="hero-typed-prefix mono">&gt;</span>
-          <span id="typed" class="hero-typed"></span>
+    <!-- Hero / welcome -->
+    <section class="hero">
+      <span class="label">welcome</span>
+      <div class="hero-head">
+        <div class="avatar" aria-hidden="true">UJ</div>
+      </div>
+      <p class="hero-lead">
+        Hi, I'm <span class="name">Umair Javaid Manj</span>, a
+        <span class="hl">cybersecurity researcher &amp; educator</span> and PhD candidate in
+        Health&nbsp;AI. I work where secure systems, applied research and teaching meet.
+      </p>
+      <p class="hero-body">
+        I've researched applied cryptography and adversarial machine learning, built verifiable
+        voting systems, and taught security and programming to 100+ students. If you'd like to
+        collaborate, hire, or just say hello — I'd love to hear from you.
+      </p>
+      <div class="profiles">
+        <a class="alink" href="https://github.com/Umair-JM" target="_blank" rel="noopener">GitHub</a>
+        <a class="alink" href="https://linkedin.com/in/umairjm" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="alink" href="mailto:umairjavaidmanj@gmail.com">Email</a>
+      </div>
+    </section>
+
+    <!-- About me -->
+    <section class="row" id="about">
+      <div class="row-label">About me</div>
+      <div class="row-content">
+        <p>
+          I'm a computer engineer turned cybersecurity researcher and educator, currently doing a
+          <strong>PhD at Auckland University of Technology</strong> on an AI-based biomarker for
+          chronic lower-back pain. Before AUT I researched secure systems at NUST's COGNET Lab and
+          taught technical courses, earning a Best Instructor award.
         </p>
-        <p class="hero-tag">
-          Cybersecurity researcher &amp; educator. PhD candidate in
-          <strong>Health&nbsp;AI</strong> at Auckland University of Technology, building an
-          AI-based biomarker for chronic lower-back pain.
-        </p>
-        <p class="hero-sub">
-          I work where <strong>secure systems</strong>, <strong>applied research</strong> and
-          <strong>teaching</strong> meet — from penetration testing and threat intelligence to
-          course design for 100+ students.
-        </p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="mailto:umairjavaidmanj@gmail.com">
-            <i data-lucide="mail"></i> Get in touch
-          </a>
-          <a class="btn btn-ghost" href="https://github.com/Umair-JM" target="_blank" rel="noopener">
-            <i data-lucide="github"></i> GitHub
-          </a>
-          <a class="btn btn-ghost" href="https://linkedin.com/in/umairjm" target="_blank" rel="noopener">
-            <i data-lucide="linkedin"></i> LinkedIn
-          </a>
-        </div>
-        <ul class="hero-meta">
-          <li><span class="dot ok" aria-hidden="true"></span> Open to security &amp; academic roles</li>
-          <li><i data-lucide="map-pin" class="meta-ico"></i> Auckland, New Zealand</li>
-          <li><i data-lucide="clock" class="meta-ico"></i> <span id="localTime" class="mono"></span></li>
+      </div>
+    </section>
+
+    <!-- Stack & tools -->
+    <section class="row">
+      <div class="row-label">Stack &amp; tools</div>
+      <div class="row-content">
+        <ul class="tags">
+          <li>C++</li><li>Python</li>
+          <li>Metasploit</li><li>Nmap</li><li>Wireshark</li><li>Nikto</li><li>WPScan</li>
+          <li>Cisco Packet Tracer</li>
+          <li>Penetration Testing</li><li>Threat Intelligence</li>
+          <li>Incident Response</li><li>Digital Forensics</li>
+          <li>Network Defense</li><li>Endpoint Security</li>
+          <li>Applied Cryptography</li><li>Adversarial ML</li>
+          <li>Computer Vision</li><li>Health AI</li>
         </ul>
       </div>
     </section>
 
-    <!-- ===== About ===== -->
-    <section class="section" id="about">
-      <div class="section-head">
-        <span class="section-kicker">01 / About</span>
-        <h2>About me</h2>
-      </div>
-      <div class="prose">
-        <p>
-          I'm a researcher and educator with a computer-engineering foundation and a deep
-          interest in <strong>cybersecurity</strong>. My research career began in the
-          <strong>COGNET Lab at NUST</strong>, where I worked on quantum-resistant
-          cryptography, defending deep-learning models against adversarial attacks, and
-          verifiable, tamper-evident voting systems combining computer vision and cryptography.
-        </p>
-        <p>
-          Alongside research I've spent years <strong>teaching</strong> — designing and
-          delivering technical courses, supervising student projects, and being recognised
-          with a <em>Best Instructor</em> award for an average of 9.15/10 across six
-          performance metrics. Today I'm pursuing a <strong>PhD at AUT</strong> at the
-          intersection of health and artificial intelligence, developing an AI-based
-          biomarker to identify chronic lower-back pain.
-        </p>
-        <p>
-          I hold an extensive stack of cybersecurity certifications across <strong>IBM</strong>,
-          <strong>Cisco</strong> and <strong>TryHackMe</strong> — spanning penetration testing,
-          threat intelligence, incident response and forensics, network defense and endpoint
-          security.
+    <!-- Beyond work -->
+    <section class="row">
+      <div class="row-label">Beyond work</div>
+      <div class="row-content">
+        <p class="muted">
+          Beyond security, I'm into teaching and mentoring, the ethics of AI in healthcare, and the
+          occasional CTF. I've volunteered as a listener at 7&nbsp;Cups and a sighted helper at
+          Be&nbsp;My&nbsp;Eyes, and once designed advocacy material for a community non-profit.
         </p>
       </div>
     </section>
 
-    <!-- ===== Stack & Tools ===== -->
-    <section class="section" id="stack">
-      <div class="section-head">
-        <span class="section-kicker">02 / Stack</span>
-        <h2>Stack &amp; tools</h2>
-      </div>
-      <div class="stack-grid">
-        <div class="card stack-card">
-          <h3>Languages</h3>
-          <ul class="tags">
-            <li>C++</li>
-            <li>Python</li>
-          </ul>
-        </div>
-        <div class="card stack-card">
-          <h3>Security tooling</h3>
-          <ul class="tags">
-            <li>Metasploit</li>
-            <li>Nmap</li>
-            <li>Wireshark</li>
-            <li>Nikto</li>
-            <li>WPScan</li>
-            <li>Cisco Packet Tracer</li>
-          </ul>
-        </div>
-        <div class="card stack-card">
-          <h3>Security domains</h3>
-          <ul class="tags">
-            <li>Penetration Testing</li>
-            <li>Threat Intelligence</li>
-            <li>Incident Response &amp; Forensics</li>
-            <li>Network Defense</li>
-            <li>Endpoint Security</li>
-            <li>Vulnerability Assessment</li>
-          </ul>
-        </div>
-        <div class="card stack-card">
-          <h3>Research &amp; ML</h3>
-          <ul class="tags">
-            <li>Applied Cryptography</li>
-            <li>Adversarial ML</li>
-            <li>Computer Vision</li>
-            <li>Health AI / Biomarkers</li>
-          </ul>
+    <!-- CTA -->
+    <p class="cta-line">Let's work together!</p>
+
+    <!-- Contact -->
+    <section class="row">
+      <div class="row-label">Contact details</div>
+      <div class="row-content">
+        <div class="kv">
+          <a class="alink" href="mailto:umairjavaidmanj@gmail.com">umairjavaidmanj@gmail.com</a>
+          <a class="alink" href="tel:+64204483186">+64 20 4483186</a>
+          <span class="muted">Auckland, New Zealand</span>
         </div>
       </div>
     </section>
 
-    <!-- ===== Work / Research ===== -->
-    <section class="section" id="work">
-      <div class="section-head">
-        <span class="section-kicker">03 / Work</span>
-        <h2>Experience &amp; research</h2>
-      </div>
-      <div class="timeline">
-
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>PhD Candidate — Health AI</h3>
-            <span class="entry-date mono">2024 — present</span>
-          </div>
-          <p class="entry-org">Auckland University of Technology · Auckland, NZ</p>
-          <ul class="entry-points">
-            <li>Developing an AI-based biomarker to identify chronic lower-back pain from physiological and behavioural data.</li>
-            <li>Designing data-collection protocols and explainable machine-learning pipelines for clinical signals.</li>
-          </ul>
-        </article>
-
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>Research Associate — Security &amp; ML</h3>
-            <span class="entry-date mono">2022 — 2023</span>
-          </div>
-          <p class="entry-org">COGNET Lab, SEECS, NUST · Islamabad, PK</p>
-          <ul class="entry-points">
-            <li>Researched <strong>quantum-resistant cryptographic</strong> techniques and pre-emptive security measures.</li>
-            <li>Defended deep-learning models against <strong>adversarial attacks</strong> using classical techniques.</li>
-            <li>Built detection methods to identify electoral manipulation (gerrymandering) at scale.</li>
-          </ul>
-        </article>
-
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>Research Assistant — Secure Systems</h3>
-            <span class="entry-date mono">2021 — 2022</span>
-          </div>
-          <p class="entry-org">COGNET Lab, SEECS, NUST · Islamabad, PK</p>
-          <ul class="entry-points">
-            <li>Built a <strong>verifiable voting system</strong> ensuring ballot integrity with computer vision and cryptography.</li>
-            <li>Designed a custom proportional-representation electoral model.</li>
-          </ul>
-        </article>
-
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>Instructor &amp; Course Designer</h3>
-            <span class="entry-date mono">2023 — 2024</span>
-          </div>
-          <p class="entry-org">HISDP · AI Lounge / Murabbi, NUST · Islamabad, PK</p>
-          <ul class="entry-points">
-            <li>Designed and delivered technical courses to a class of <strong>106 students</strong>; co-supervised 18 term projects.</li>
-            <li>Awarded <strong>Best Instructor</strong> (9.15/10 average across six feedback metrics).</li>
-          </ul>
-        </article>
-
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>Junior Network Engineer</h3>
-            <span class="entry-date mono">2016 — 2017</span>
-          </div>
-          <p class="entry-org">Dewaan Networking Solutions</p>
-          <ul class="entry-points">
-            <li>Configured and maintained IoT and networking systems; troubleshot and repaired network hardware.</li>
-          </ul>
-        </article>
-
-      </div>
-    </section>
-
-    <!-- ===== Certifications ===== -->
-    <section class="section" id="certs">
-      <div class="section-head">
-        <span class="section-kicker">04 / Credentials</span>
-        <h2>Certifications</h2>
-      </div>
-      <p class="muted">A focused selection from 20+ completed certifications.</p>
-      <div class="cert-grid">
-        <div class="cert"><span class="cert-issuer">IBM</span>Cybersecurity Analyst (Professional Certificate)</div>
-        <div class="cert"><span class="cert-issuer">IBM</span>Penetration Testing, Incident Response &amp; Forensics</div>
-        <div class="cert"><span class="cert-issuer">IBM</span>Cybersecurity Compliance Framework &amp; System Administration</div>
-        <div class="cert"><span class="cert-issuer">IBM</span>Network Security &amp; Database Vulnerabilities</div>
-        <div class="cert"><span class="cert-issuer">Coursera</span>Cyber Threat Intelligence</div>
-        <div class="cert"><span class="cert-issuer">TryHackMe</span>Jr Penetration Tester</div>
-        <div class="cert"><span class="cert-issuer">Cisco</span>CCST Cybersecurity</div>
-        <div class="cert"><span class="cert-issuer">Cisco</span>Network Defense</div>
-        <div class="cert"><span class="cert-issuer">Cisco</span>Endpoint Security</div>
-        <div class="cert"><span class="cert-issuer">Cisco</span>Cyber Threat Management</div>
-        <div class="cert"><span class="cert-issuer">Coursera</span>Cybersecurity Capstone: Breach Response Case Studies</div>
-        <div class="cert"><span class="cert-issuer">Princeton</span>Bitcoin &amp; Cryptocurrency Technologies</div>
-      </div>
-    </section>
-
-    <!-- ===== Education ===== -->
-    <section class="section" id="education">
-      <div class="section-head">
-        <span class="section-kicker">05 / Education</span>
-        <h2>Education</h2>
-      </div>
-      <div class="timeline">
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>PhD — Health &amp; Artificial Intelligence</h3>
-            <span class="entry-date mono">2024 — present</span>
-          </div>
-          <p class="entry-org">Auckland University of Technology · Auckland, NZ</p>
-          <ul class="entry-points">
-            <li>Thesis: an AI-based biomarker for identifying chronic lower-back pain.</li>
-          </ul>
-        </article>
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>MS — Computational Science &amp; Engineering</h3>
-            <span class="entry-date mono">2021</span>
-          </div>
-          <p class="entry-org">National University of Sciences &amp; Technology (NUST) · Islamabad, PK</p>
-          <ul class="entry-points">
-            <li>Thesis: energy &amp; power conservation in data centers using fuzzy inference systems (≈30% cost reduction).</li>
-          </ul>
-        </article>
-        <article class="card entry">
-          <div class="entry-top">
-            <h3>BE — Computer Engineering</h3>
-            <span class="entry-date mono">2016</span>
-          </div>
-          <p class="entry-org">National University of Sciences &amp; Technology (NUST) · Islamabad, PK</p>
-          <ul class="entry-points">
-            <li>Thesis: NATO narrowband waveform implemented on an SDR kit (convolutional encoding &amp; phase modulation).</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <!-- ===== Now / Contact ===== -->
-    <section class="section" id="contact">
-      <div class="section-head">
-        <span class="section-kicker">06 / Contact</span>
-        <h2>Let's talk</h2>
-      </div>
-      <div class="contact-grid">
-        <div class="card now-card">
-          <h3><span class="dot ok" aria-hidden="true"></span> Now</h3>
-          <p>
-            Researching AI biomarkers for chronic pain at AUT, and open to
-            <strong>cybersecurity</strong>, <strong>lecturer</strong> and
-            <strong>teaching-assistant</strong> roles.
-          </p>
-        </div>
-        <div class="card contact-card">
-          <h3>Reach me</h3>
-          <ul class="contact-list">
-            <li><a href="mailto:umairjavaidmanj@gmail.com">umairjavaidmanj@gmail.com</a></li>
-            <li><a href="tel:+64204483186">+64 20 4483186</a></li>
-            <li><a href="https://linkedin.com/in/umairjm" target="_blank" rel="noopener">linkedin.com/in/umairjm</a></li>
-            <li><a href="https://github.com/Umair-JM" target="_blank" rel="noopener">github.com/Umair-JM</a></li>
-          </ul>
+    <!-- Socials -->
+    <section class="row">
+      <div class="row-label">Socials</div>
+      <div class="row-content">
+        <div class="socials-list">
+          <a class="alink" href="https://linkedin.com/in/umairjm" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="alink" href="https://github.com/Umair-JM" target="_blank" rel="noopener">GitHub</a>
         </div>
       </div>
     </section>
 
+    <!-- Timezone -->
+    <section class="row">
+      <div class="row-label">Local time</div>
+      <div class="row-content">
+        <div class="tz" id="tz">
+          <button class="fmt" id="tzFmt" aria-label="Toggle 12/24 hour">12h</button>
+          <div class="tz-col">
+            <span class="tz-time" id="tzMy">—</span>
+            <span class="tz-sub">my time · Auckland</span>
+          </div>
+          <span class="dash">·</span>
+          <div class="tz-col">
+            <span class="tz-time" id="tzYours">—</span>
+            <span class="tz-sub">your time · <span id="tzYourZone">—</span></span>
+          </div>
+          <span class="dash">·</span>
+          <span id="tzOffset" class="muted"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer / nav -->
     <footer class="footer">
-      <span>© <span id="year"></span> Umair Javaid Manj</span>
-      <span class="footer-built">Built with plain HTML &amp; CSS · hosted on GitHub Pages</span>
+      <nav class="footer-nav" aria-label="More pages">
+        <a href="certifications.html">Certifications</a>
+        <a href="playground.html">Playground</a>
+        <a href="travel.html">Travel</a>
+        <a href="blog.html">Blog</a>
+        <a href="guestbook.html">Guestbook</a>
+        <a href="now.html">Now</a>
+      </nav>
+      <div class="footer-meta">
+        <span>© <span id="year"></span> Umair Javaid Manj</span>
+        <span>Hand-built with HTML &amp; CSS · <a href="https://github.com/Umair-JM/Umair-JM.github.io" target="_blank" rel="noopener">source</a></span>
+      </div>
     </footer>
-  </div>
 
-  <!-- Front-end plugins (all free / open-source, via jsDelivr CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.1.0/dist/typed.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="script.js"></script>
+  </main>
 </body>
 </html>
