@@ -1,11 +1,11 @@
-/* Umair Javaid Manj — portfolio interactions (vanilla JS, no dependencies) */
+/* Umair Javaid Manj, portfolio interactions (vanilla JS, no dependencies) */
 
 // ===== Theme: dark/light + accent swatches (persisted) =====
 (function () {
   const root = document.documentElement;
   const savedMode = localStorage.getItem("mode");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  root.setAttribute("data-theme", savedMode || (prefersDark ? "dark" : "light"));
+  // Default to the dark (jacket black + red neon) theme for everyone.
+  root.setAttribute("data-theme", savedMode || "dark");
 
   const savedAccent = localStorage.getItem("accent");
   if (savedAccent) root.style.setProperty("--accent", savedAccent);
@@ -111,7 +111,7 @@ function initGuestbook() {
   function render() {
     const msgs = load();
     if (!msgs.length) {
-      list.innerHTML = '<p class="empty-note">No messages yet — be the first to say hi 👋</p>';
+      list.innerHTML = '<p class="empty-note">No messages yet, be the first to say hi 👋</p>';
       return;
     }
     list.innerHTML = msgs
