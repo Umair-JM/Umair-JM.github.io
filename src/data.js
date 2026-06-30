@@ -55,7 +55,7 @@ export const experience = [
     org: "HISDP, AI Lounge & Murabbi, NUST",
     date: "2023 to 2024",
     blurb:
-      "Taught smart contract security, blockchain security and security tooling to a class of 106, built the hands on labs and capture the flag style assessments, and won a Best Instructor award at 9.15 of 10.",
+      "Taught smart contract security, blockchain security and security tooling, built the hands on labs and capture the flag style assessments, and won a Best Instructor award.",
   },
   {
     role: "Security Researcher",
@@ -72,7 +72,7 @@ export const experience = [
       "Built a tamper evident, verifiable voting system using cryptography and computer vision, implementing integrity checks for end to end auditing.",
   },
   {
-    role: "Network & Security Engineer",
+    role: "Network Engineer",
     org: "Dewaan Networking Solutions",
     date: "2016 to 2017",
     blurb:
@@ -80,18 +80,31 @@ export const experience = [
   },
 ];
 
-export const projects = [
+export const certProjects = [
   {
-    title: "Detection and SOC home lab",
-    blurb:
-      "Stood up a Microsoft Sentinel lab, ingested Windows and network logs, wrote KQL detections mapped to MITRE ATT&CK, and triaged simulated alerts end to end.",
-    tags: ["Sentinel", "KQL", "MITRE ATT&CK"],
+    title: "Microsoft Sentinel detection lab",
+    cert: "SC-200",
+    blurb: "Built a Sentinel workspace, connected data sources, and wrote analytics rules to flag suspicious sign ins and lateral movement.",
   },
   {
-    title: "Offensive practice paths",
-    blurb:
-      "Worked the TryHackMe Jr Penetration Tester, Pre Security and Web Fundamentals paths, practising enumeration, web exploitation and privilege escalation in lab environments.",
-    tags: ["Enumeration", "Web exploitation", "Privesc"],
+    title: "Threat hunting with KQL",
+    cert: "SC-200",
+    blurb: "Wrote KQL queries across sign in and device logs to surface brute force attempts and unusual process activity.",
+  },
+  {
+    title: "Defender incident investigation",
+    cert: "SC-200",
+    blurb: "Triaged incidents in Microsoft Defender, walked the alert timeline, and mapped the activity to MITRE ATT&CK.",
+  },
+  {
+    title: "VLANs and inter-VLAN routing",
+    cert: "CCNA",
+    blurb: "Designed a segmented network with VLANs, trunking and inter VLAN routing, then hardened the switch ports.",
+  },
+  {
+    title: "OSPF routing and ACLs",
+    cert: "CCNA",
+    blurb: "Configured OSPF and applied access control lists to filter traffic between network segments.",
   },
 ];
 
@@ -147,11 +160,11 @@ export const securityResearch = [
 export const navGrid = [
   { to: "/certifications", label: "Certifications", note: "20+ security credentials" },
   { to: "/research", label: "Research", note: "Zero trust and secure systems" },
-  { to: "/playground", label: "Playground", note: "Animated security experiments" },
+  { to: "/playground", label: "Projects", note: "Hands-on labs from SC-200 and CCNA" },
   { to: "/guestbook", label: "Guestbook", note: "Leave a note" },
 ];
 
 export const now = {
   date: "June 2026",
-  text: "Building Sentinel detections in my home lab, finishing SC-200 and CCNA, and looking for part time security analyst work in Auckland.",
+  text: "Building out my detection home lab and looking for a full time security analyst or cybersecurity analyst role in Auckland.",
 };

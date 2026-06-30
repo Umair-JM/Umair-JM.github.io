@@ -13,7 +13,7 @@ export default function TopBar() {
         <NavLink to="/" end>Home</NavLink>
         <NavLink to="/certifications">Certifications</NavLink>
         <NavLink to="/research">Research</NavLink>
-        <NavLink to="/playground">Playground</NavLink>
+        <NavLink to="/playground">Projects</NavLink>
         <NavLink to="/guestbook">Guestbook</NavLink>
       </nav>
       <Magnetic as="a" className="book-btn" href="mailto:umairjavaidmanj@gmail.com?subject=Let%27s%20talk">

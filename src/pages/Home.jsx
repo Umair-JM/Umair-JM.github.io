@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { profile, focus, stack, marqueeA, marqueeB, experience, projects, certHighlights, navGrid, now } from "../data.js";
+import { profile, focus, stack, marqueeA, marqueeB, experience, certHighlights, navGrid, now } from "../data.js";
 import { Reveal, Stagger, StaggerItem, SpotlightCard, Magnetic } from "../lib/motion.jsx";
 import Marquee from "../components/Marquee.jsx";
 import WorldStrip from "../components/WorldStrip.jsx";
@@ -84,20 +84,6 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
-      </Row>
-
-      <Row label="Hands-on work">
-        <Stagger className="proj-grid" gap={0.06}>
-          {projects.map((p) => (
-            <StaggerItem key={p.title}>
-              <SpotlightCard className="proj-card">
-                <h4>{p.title}</h4>
-                <p>{p.blurb}</p>
-                <div className="mini-tags">{p.tags.map((t) => (<span key={t}>{t}</span>))}</div>
-              </SpotlightCard>
-            </StaggerItem>
-          ))}
-        </Stagger>
       </Row>
 
       <Row label="Certifications">

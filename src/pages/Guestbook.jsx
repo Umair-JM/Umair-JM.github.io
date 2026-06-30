@@ -33,7 +33,7 @@ export default function Guestbook() {
       <div className="subhead">
         <Reveal as="div" className="label">Say hi</Reveal>
         <Reveal as="h1" delay={0.05}>Guestbook</Reveal>
-        <Reveal as="p" delay={0.1}>Drop a note, say hi, or leave a thought. Messages are kept in your browser.</Reveal>
+        <Reveal as="p" delay={0.1}>Drop a note, say hi, or leave a thought.</Reveal>
       </div>
 
       <form className="gb-form" onSubmit={submit}>
