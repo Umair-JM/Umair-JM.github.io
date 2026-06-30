@@ -29,21 +29,24 @@ export default function Home() {
     const el = heroRef.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      // Portrait + graph drift up and fade slightly as the hero scrolls away.
-      gsap.to(".hero-portrait", {
-        yPercent: -14,
-        opacity: 0.65,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.4 },
-      });
-      // Copy parallaxes at a gentler rate for depth.
-      gsap.to(".hero-copy", {
-        yPercent: -6,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.6 },
-      });
+      // Gentle parallax as the hero scrolls away. Opacity is left alone so the
+      // framer-motion entrance fade and GSAP never fight over the same value.
+      // fromTo + immediateRender:false stops GSAP capturing the mid-entrance
+      // state as its scroll-start, which previously snapped the portrait to
+      // invisible on the first scroll.
+      gsap.fromTo(".hero-portrait",
+        { yPercent: 0 },
+        { yPercent: -12, ease: "none", immediateRender: false,
+          scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.4, invalidateOnRefresh: true } });
+      gsap.fromTo(".hero-copy",
+        { yPercent: 0 },
+        { yPercent: -6, ease: "none", immediateRender: false,
+          scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.6, invalidateOnRefresh: true } });
     }, el);
-    return () => ctx.revert();
+    // Recompute trigger positions once the portrait image has loaded.
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onLoad);
+    return () => { window.removeEventListener("load", onLoad); ctx.revert(); };
   }, []);
 
   return (
