@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting…</title>
+    <script>
+      // SPA fallback for GitHub Pages. Store the requested path and bounce to
+      // the app root, where index.html restores it. Root user site keeps 0
+      // path segments before the app routes.
+      (function () {
+        sessionStorage.redirect = location.href;
+        location.replace(location.origin + "/");
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

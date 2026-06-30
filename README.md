@@ -1,35 +1,40 @@
-# Umair Javaid Manj, Portfolio
+# Umair Javaid Manj, Cybersecurity Portfolio
 
-Personal portfolio for **Umair Javaid Manj**, a cybersecurity and networking specialist (penetration testing, network security, threat intelligence, incident response).
+Personal portfolio for **Umair Javaid Manj**, a cybersecurity and networking specialist in
+Auckland (security operations, threat intelligence, incident response, network defense and applied
+security research).
 
 Live: https://umair-jm.github.io
 
-## About this site
-A multi-page static site. Plain hand written HTML, CSS and vanilla JavaScript, with no framework and no build step. The structure (label to content rows, timezone widget, accent theme switcher) takes after the layout of gianmarcocavallo.com, rebuilt from scratch with original code. The look is a **jacket black background with red neon** accents, and red neon borders on every button.
+## Stack
+React + Vite + framer-motion. Jacket black with red neon accents. Animated reveals, staggered
+lists, cursor spotlight cards and magnetic buttons, all built on framer-motion with a small
+in-repo component library (`src/lib/motion.jsx`).
 
 ```
-index.html          home (hero, about, focus, stack, experience, certifications, contact)
-certifications.html masonry grid of certifications
-playground.html     security experiments and CTF writeups
-travel.html         places lived and visited
-guestbook.html      leave a message (stored locally in the browser)
-now.html            what I'm focused on now
-styles.css          design system and components
-app.js              theme switcher, timezone widget, guestbook
-favicon.svg         shield favicon
+src/
+  main.jsx            app entry, BrowserRouter
+  App.jsx             routes (home, certifications, research)
+  index.css           design system + tokens
+  data.js             all content
+  lib/motion.jsx      Reveal, Stagger, SpotlightCard, Magnetic
+  components/          TopBar, Footer, LocalTime
+  pages/              Home, Certifications, Research
+public/
+  favicon.svg         shield favicon
+  404.html            SPA fallback for GitHub Pages deep links
+.github/workflows/    deploy.yml builds and publishes to GitHub Pages
 ```
-
-## Fonts
-Satoshi, Cabinet Grotesk and Zodiak, served free from the Fontshare CDN (free for personal and commercial use). No other third party dependencies.
 
 ## Develop locally
-Open `index.html` in a browser, or serve the folder:
-
 ```bash
-python -m http.server 8000   # then visit http://localhost:8000
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # outputs to dist/
 ```
 
-## Editing
-All content is plain HTML. Colours and fonts are tokenised at the top of `styles.css` (`:root` is the dark neon theme, `[data-theme="light"]` is a warm light theme). The accent swatches in the top bar let visitors recolour the site; their choice is saved in `localStorage`.
+## Deploy
+Pushing to `main` triggers the GitHub Actions workflow, which builds and publishes to GitHub Pages.
+Pages source must be set to "GitHub Actions" in the repository settings.
 
 (c) Umair Javaid Manj
