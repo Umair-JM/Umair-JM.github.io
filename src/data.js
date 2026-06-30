@@ -1,6 +1,7 @@
 // Content for the cybersecurity and networking portfolio.
-// PhD is kept in the background and the health subject is not named here, by
-// design. Voice is plain first person, no dashes.
+// Voice: plain first person, no dashes, no repetitive "I am X, I am Y" lines.
+// The narrative runs networks to security, with a security thread through
+// every role. The PhD stays in the background and its subject is not named.
 
 export const profile = {
   name: "Umair Javaid Manj",
@@ -10,13 +11,12 @@ export const profile = {
   phone: "+64 20 4483186",
   github: "https://github.com/Umair-JM",
   linkedin: "https://linkedin.com/in/umairjm",
-  lead:
-    "I work in cybersecurity and networking, and that is where I am building my career.",
+  lead: "I secure networks and the systems that run on them.",
   intro:
-    "I came into this through networks first, then security research. I have configured and fixed networks as a junior network engineer, worked on cryptography and machine learning security at NUST's COGNET Lab, and earned more than 20 certifications from IBM, Cisco and TryHackMe. Most weekends I am in a lab or a CTF. I am also doing a PhD in applied AI on the side, but security and networking are the day job.",
+    "My path into security started with networks. I configured and hardened the kit that keeps traffic moving, and the more I understood how that traffic could be abused, the further I moved into defending it. Since then I have researched cryptography and the security of machine learning systems, taught smart contract and blockchain security to full classrooms, and spent my own time in SOC labs and capture the flag events.",
   about: [
-    "I am a security and networking person at heart. I like working out how systems talk to each other, then how they break, and how to keep them from breaking. My base is computer engineering, and most of my hands on time has gone into network configuration, security monitoring, threat intelligence and incident response.",
-    "I am looking for part time and contract security work in Auckland that I can run alongside my doctoral study. Security Analyst and SOC Analyst roles are the target, and I hold New Zealand work rights.",
+    "Computer engineering is my foundation, and most of my hands on time goes into security monitoring, threat intelligence, incident response and network defense. I like working out how systems talk to each other, then how they break, then how to keep them from breaking.",
+    "I am looking for security analyst work in Auckland where I can put that to use, building detections, triaging alerts and keeping networks defensible.",
   ],
 };
 
@@ -24,58 +24,77 @@ export const focus = [
   "Security Operations",
   "Threat Intelligence",
   "Incident Response",
-  "Vulnerability Assessment",
   "Network Defense",
+  "Vulnerability Assessment",
   "Endpoint Security",
-  "Penetration Testing",
+  "Detection Engineering",
+  "Network Hardening",
 ];
 
 export const stack = {
-  Languages: ["C++", "Python", "Bash", "PowerShell"],
-  "Security tooling": ["Nmap", "Wireshark", "Metasploit", "Burp Suite", "Nikto", "WPScan", "Nessus"],
-  Networking: ["TCP/IP", "Routing & Switching", "VLANs", "Subnetting", "Firewalls", "IDS / IPS", "Cisco IOS"],
-  "Frameworks & platforms": ["NIST CSF", "MITRE ATT&CK", "SIEM / SOC", "Microsoft Sentinel", "Linux", "Windows"],
+  Languages: ["Python", "C++", "Bash", "PowerShell"],
+  "Security operations": ["Microsoft Sentinel", "Splunk", "KQL", "Microsoft Defender", "MITRE ATT&CK", "NIST CSF"],
+  Networking: ["TCP/IP", "Routing & Switching", "VLANs", "Subnetting", "Firewalls", "IDS / IPS", "ACLs", "Cisco IOS"],
+  Tooling: ["Nmap", "Wireshark", "Burp Suite", "Metasploit", "Nessus", "Packet Tracer"],
 };
+
+// Marquee rows on the home page.
+export const marqueeA = ["Security Operations", "Threat Intelligence", "Incident Response", "Network Defense", "Detection Engineering", "Vulnerability Assessment", "Endpoint Security"];
+export const marqueeB = ["Microsoft Sentinel", "KQL", "MITRE ATT&CK", "Wireshark", "Nmap", "Burp Suite", "Cisco IOS", "NIST CSF", "Splunk", "Nessus"];
 
 export const experience = [
   {
-    role: "Project Manager",
+    role: "Program Manager, Technical Education",
     org: "Coding, Robotics & AI Learning Project, NUST",
     date: "2024 to 2025",
     blurb:
-      "Ran a national STEAM training project, coordinating 80 trainers, tracking delivery against standards and reporting on outcomes.",
+      "Ran a national training program covering cybersecurity, networking and AI, coordinating 80 instructors, setting delivery standards and reporting on quality and outcomes.",
   },
   {
-    role: "Instructor, Security & Blockchain",
+    role: "Instructor, Blockchain & Cybersecurity",
     org: "HISDP, AI Lounge & Murabbi, NUST",
     date: "2023 to 2024",
     blurb:
-      "Taught security and blockchain to a class of 106, built the labs and assessments, and won a Best Instructor award (9.15 of 10).",
+      "Taught smart contract security, blockchain security and security tooling to a class of 106, built the hands on labs and capture the flag style assessments, and won a Best Instructor award at 9.15 of 10.",
   },
   {
-    role: "Research Associate, Security & ML",
+    role: "Security Researcher",
     org: "COGNET Lab, SEECS, NUST",
     date: "2022 to 2023",
     blurb:
-      "Worked on quantum resistant cryptography and on defending machine learning models against adversarial attacks.",
+      "Researched post quantum cryptography and hardened machine learning models against adversarial attacks, working through threat models and defensive techniques, and mentored junior researchers.",
   },
   {
-    role: "Research Assistant, Secure Systems",
+    role: "Secure Systems Researcher",
     org: "COGNET Lab, SEECS, NUST",
     date: "2021 to 2022",
     blurb:
-      "Built a verifiable voting system that kept ballots tamper evident using computer vision and cryptography.",
+      "Built a tamper evident, verifiable voting system using cryptography and computer vision, implementing integrity checks for end to end auditing.",
   },
   {
-    role: "Junior Network Engineer",
+    role: "Network & Security Engineer",
     org: "Dewaan Networking Solutions",
     date: "2016 to 2017",
     blurb:
-      "Configured and maintained networks and IoT gear, ran routine checkups, and repaired hardware when it failed.",
+      "Configured and hardened routers, switches and firewalls, set up VLAN segmentation and access control lists, monitored traffic, and secured IoT deployments.",
   },
 ];
 
-// Featured certs on the home page.
+export const projects = [
+  {
+    title: "Detection and SOC home lab",
+    blurb:
+      "Stood up a Microsoft Sentinel lab, ingested Windows and network logs, wrote KQL detections mapped to MITRE ATT&CK, and triaged simulated alerts end to end.",
+    tags: ["Sentinel", "KQL", "MITRE ATT&CK"],
+  },
+  {
+    title: "Offensive practice paths",
+    blurb:
+      "Worked the TryHackMe Jr Penetration Tester, Pre Security and Web Fundamentals paths, practising enumeration, web exploitation and privilege escalation in lab environments.",
+    tags: ["Enumeration", "Web exploitation", "Privesc"],
+  },
+];
+
 export const certHighlights = [
   { issuer: "IBM", name: "Cybersecurity Analyst" },
   { issuer: "Microsoft", name: "SC-200 Security Operations" },
@@ -85,7 +104,6 @@ export const certHighlights = [
   { issuer: "IBM", name: "Pen Testing, IR & Forensics" },
 ];
 
-// Full certifications list for the certifications page.
 export const certsCompleted = [
   { issuer: "Microsoft", name: "SC-200, Security Operations Analyst" },
   { issuer: "Cisco", name: "CCNA, Cisco Certified Network Associate" },
@@ -110,7 +128,7 @@ export const certsCompleted = [
   { issuer: "Princeton", name: "Bitcoin & Cryptocurrency Technologies" },
 ];
 
-// Only the security relevant research is surfaced on the cyber site.
+// Security relevant research only.
 export const securityResearch = [
   {
     cite:
@@ -125,3 +143,15 @@ export const securityResearch = [
     status: "Submitted",
   },
 ];
+
+export const navGrid = [
+  { to: "/certifications", label: "Certifications", note: "20+ security credentials" },
+  { to: "/research", label: "Research", note: "Zero trust and secure systems" },
+  { to: "/playground", label: "Playground", note: "Animated security experiments" },
+  { to: "/guestbook", label: "Guestbook", note: "Leave a note" },
+];
+
+export const now = {
+  date: "June 2026",
+  text: "Building Sentinel detections in my home lab, finishing SC-200 and CCNA, and looking for part time security analyst work in Auckland.",
+};
