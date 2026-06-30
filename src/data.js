@@ -77,22 +77,19 @@ export const experience = [
 
 // Featured certs on the home page.
 export const certHighlights = [
-  { issuer: "IBM", name: "Cybersecurity Analyst", status: "done" },
-  { issuer: "Microsoft", name: "SC-200 Security Operations", status: "progress" },
-  { issuer: "Cisco", name: "CCNA", status: "progress" },
-  { issuer: "TryHackMe", name: "Jr Penetration Tester", status: "done" },
-  { issuer: "Cisco", name: "CCST Cybersecurity", status: "done" },
-  { issuer: "IBM", name: "Pen Testing, IR & Forensics", status: "done" },
+  { issuer: "IBM", name: "Cybersecurity Analyst" },
+  { issuer: "Microsoft", name: "SC-200 Security Operations" },
+  { issuer: "Cisco", name: "CCNA" },
+  { issuer: "TryHackMe", name: "Jr Penetration Tester" },
+  { issuer: "Cisco", name: "CCST Cybersecurity" },
+  { issuer: "IBM", name: "Pen Testing, IR & Forensics" },
 ];
 
 // Full certifications list for the certifications page.
-export const certsInProgress = [
+export const certsCompleted = [
   { issuer: "Microsoft", name: "SC-200, Security Operations Analyst" },
   { issuer: "Cisco", name: "CCNA, Cisco Certified Network Associate" },
   { issuer: "n8n", name: "Automation 101, 102 & 103" },
-];
-
-export const certsCompleted = [
   { issuer: "IBM", name: "Cybersecurity Analyst, Professional Certificate" },
   { issuer: "TryHackMe", name: "Jr Penetration Tester" },
   { issuer: "IBM", name: "Penetration Testing, Incident Response & Forensics" },
