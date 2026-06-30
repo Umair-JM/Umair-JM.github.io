@@ -1,9 +1,13 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { profile, focus, stack, marqueeA, marqueeB, experience, certHighlights, navGrid, now } from "../data.js";
 import { Reveal, Stagger, StaggerItem, SpotlightCard, Magnetic } from "../lib/motion.jsx";
 import Marquee from "../components/Marquee.jsx";
 import WorldStrip from "../components/WorldStrip.jsx";
+import HeroCanvas from "../components/HeroCanvas.jsx";
 import Footer from "../components/Footer.jsx";
 
 function Row({ label, children, id }) {
@@ -15,11 +19,37 @@ function Row({ label, children, id }) {
   );
 }
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function Home() {
+  const heroRef = useRef(null);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = heroRef.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      // Portrait + graph drift up and fade slightly as the hero scrolls away.
+      gsap.to(".hero-portrait", {
+        yPercent: -14,
+        opacity: 0.65,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.4 },
+      });
+      // Copy parallaxes at a gentler rate for depth.
+      gsap.to(".hero-copy", {
+        yPercent: -6,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.6 },
+      });
+    }, el);
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
       {/* Hero */}
-      <section className="hero hero-split">
+      <section className="hero hero-split" ref={heroRef}>
         <div className="hero-copy">
           <motion.div className="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
             Cybersecurity & Networking
@@ -45,6 +75,7 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
+          <HeroCanvas />
           <motion.img
             src="/portrait.png"
             alt="Umair Javaid Manj"

@@ -80,33 +80,69 @@ export const experience = [
   },
 ];
 
-export const certProjects = [
+// Recruiter facing projects. Each one is real work, framed by outcome and the
+// tools used, grouped so a hiring manager can scan security and networking
+// depth at a glance. `featured` surfaces the lead project at the top.
+export const projects = [
   {
-    title: "Microsoft Sentinel detection lab",
+    title: "Detection engineering home lab",
+    domain: "Security operations",
     cert: "SC-200",
-    blurb: "Built a Sentinel workspace, connected data sources, and wrote analytics rules to flag suspicious sign ins and lateral movement.",
+    featured: true,
+    outcome: "End to end SOC workflow, from raw logs to triaged, ATT&CK mapped incidents",
+    blurb:
+      "Stood up a Microsoft Sentinel workspace, ingested sign in, identity and endpoint logs, and authored scheduled analytics rules that flag suspicious sign ins and lateral movement. Tuned the rules to cut noisy positives and mapped every detection to MITRE ATT&CK so an alert reads as a story, not a row in a table.",
+    tags: ["Microsoft Sentinel", "KQL", "MITRE ATT&CK", "Microsoft Defender"],
   },
   {
-    title: "Threat hunting with KQL",
+    title: "Threat hunting query pack",
+    domain: "Security operations",
     cert: "SC-200",
-    blurb: "Wrote KQL queries across sign in and device logs to surface brute force attempts and unusual process activity.",
+    outcome: "Reusable KQL hunts that surface brute force and anomalous process activity",
+    blurb:
+      "Wrote KQL across sign in and device tables to hunt brute force attempts, impossible travel and unusual process execution, then packaged the queries as a reusable hunting set with notes on the signal behind each one.",
+    tags: ["KQL", "Threat hunting", "Microsoft Sentinel"],
   },
   {
-    title: "Defender incident investigation",
+    title: "Incident investigation and IR runbook",
+    domain: "Security operations",
     cert: "SC-200",
-    blurb: "Triaged incidents in Microsoft Defender, walked the alert timeline, and mapped the activity to MITRE ATT&CK.",
+    outcome: "A repeatable triage path that shortens time to a decision",
+    blurb:
+      "Triaged incidents in Microsoft Defender, reconstructed alert timelines across identity and endpoint, scoped blast radius, and wrote a short incident response runbook so the same investigation can be repeated under pressure.",
+    tags: ["Microsoft Defender", "Incident Response", "MITRE ATT&CK"],
   },
   {
-    title: "VLANs and inter-VLAN routing",
+    title: "Tamper evident voting system",
+    domain: "Applied security research",
+    cert: "Research",
+    outcome: "End to end auditable system with cryptographic integrity checks",
+    blurb:
+      "Built a verifiable voting system that pairs cryptographic integrity checks with computer vision, so every ballot is tamper evident and the result can be audited end to end. Designed the threat model first, then the controls to defeat it.",
+    tags: ["Cryptography", "Threat modeling", "Computer vision", "Python"],
+  },
+  {
+    title: "Segmented enterprise network",
+    domain: "Networking",
     cert: "CCNA",
-    blurb: "Designed a segmented network with VLANs, trunking and inter VLAN routing, then hardened the switch ports.",
+    outcome: "A defensible network design with isolation built in, not bolted on",
+    blurb:
+      "Designed a segmented network with VLANs, 802.1Q trunking and inter VLAN routing, then hardened the access layer with port security and disabled unused services. Segmentation chosen so a compromise in one zone does not become a compromise of all of them.",
+    tags: ["VLANs", "Inter-VLAN routing", "Port security", "Cisco IOS"],
   },
   {
-    title: "OSPF routing and ACLs",
+    title: "OSPF routing with ACL filtering",
+    domain: "Networking",
     cert: "CCNA",
-    blurb: "Configured OSPF and applied access control lists to filter traffic between network segments.",
+    outcome: "Dynamic routing plus least privilege traffic control between segments",
+    blurb:
+      "Configured OSPF for dynamic routing across a multi segment topology, then applied access control lists to enforce least privilege traffic flow between segments and log what was denied.",
+    tags: ["OSPF", "ACLs", "Routing & switching", "Packet Tracer"],
   },
 ];
+
+// Kept for any view that still expects the old shape.
+export const certProjects = projects;
 
 export const certHighlights = [
   { issuer: "IBM", name: "Cybersecurity Analyst" },
@@ -160,7 +196,7 @@ export const securityResearch = [
 export const navGrid = [
   { to: "/certifications", label: "Certifications", note: "20+ security credentials" },
   { to: "/research", label: "Research", note: "Zero trust and secure systems" },
-  { to: "/playground", label: "Projects", note: "Hands-on labs from SC-200 and CCNA" },
+  { to: "/playground", label: "Projects", note: "Security & networking work, by outcome" },
   { to: "/guestbook", label: "Guestbook", note: "Leave a note" },
 ];
 

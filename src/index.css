@@ -50,6 +50,9 @@ body {
     linear-gradient(90deg, transparent 95%, rgba(255, 42, 68, 0.05) 95%) 0 0 / 46px 100%;
 }
 
+/* GSAP scroll progress line, pinned under the sticky top bar */
+.scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 80; transform: scaleX(0); transform-origin: 0 50%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: var(--neon-1); pointer-events: none; }
+
 a { color: inherit; text-decoration: none; }
 .mono { font-family: var(--font-mono); }
 .skip-link { position: absolute; left: -999px; }
@@ -160,6 +163,17 @@ a { color: inherit; text-decoration: none; }
 
 /* ===== Projects & labs page ===== */
 .lab-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.proj-group { margin-bottom: 0.4rem; }
+.proj-stack { display: flex; flex-direction: column; gap: 0.7rem; }
+.proj-outcome { color: var(--ink) !important; font-weight: 600; font-size: 0.95rem !important; margin: 0.1rem 0 0.55rem !important; }
+.proj-card .mini-tags, .proj-featured .mini-tags { margin-top: 0.75rem; }
+
+/* featured lead project */
+.proj-featured { margin-bottom: 1.6rem; border-color: var(--accent); box-shadow: var(--neon-1); }
+.proj-featured .spotlight-body { padding: 1.2rem 1.3rem; }
+.proj-featured-tag { display: inline-block; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 0.12rem 0.5rem; margin-bottom: 0.7rem; box-shadow: var(--neon-1); }
+.proj-featured .lab-top h3 { font-size: 1.18rem; }
+.proj-featured p { font-size: 0.96rem; }
 .lab-card .spotlight-body { padding: 1rem 1.1rem; }
 .lab-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
 .lab-top h3 { margin: 0; font-size: 1.02rem; font-weight: 600; }
@@ -236,7 +250,8 @@ a { color: inherit; text-decoration: none; }
 .hero-copy { min-width: 0; }
 .hero-portrait { display: flex; justify-content: center; align-items: center; position: relative; }
 .hero-portrait::after { content: ""; position: absolute; inset: 8% 12%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent), transparent 68%); filter: blur(26px); z-index: -1; }
-.hero-portrait img { width: 100%; max-width: 320px; height: auto; user-select: none; }
+.hero-portrait img { position: relative; z-index: 1; width: 100%; max-width: 320px; height: auto; user-select: none; }
+.hero-canvas { position: absolute; inset: -8% -6%; width: 112%; height: 116%; z-index: 0; pointer-events: auto; }
 @media (max-width: 680px) {
   .hero-split { grid-template-columns: 1fr; }
   .hero-portrait { order: -1; }
