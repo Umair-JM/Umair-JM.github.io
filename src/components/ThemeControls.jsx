@@ -6,7 +6,7 @@ const ACCENTS = ["#ff2a44", "#19d36b", "#2ad4ff", "#b06bff", "#ffb02a"];
 
 export default function ThemeControls() {
   const [accent, setAccent] = useState(() => localStorage.getItem("accent") || ACCENTS[0]);
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
 
   useEffect(() => {
     document.documentElement.style.setProperty("--accent", accent);

@@ -87,7 +87,7 @@ export const projects = [
   {
     title: "Detection engineering home lab",
     domain: "Security operations",
-    cert: "SC-200",
+    cert: "SOC",
     featured: true,
     outcome: "End to end SOC workflow, from raw logs to triaged, ATT&CK mapped incidents",
     blurb:
@@ -97,7 +97,7 @@ export const projects = [
   {
     title: "Threat hunting query pack",
     domain: "Security operations",
-    cert: "SC-200",
+    cert: "SOC",
     outcome: "Reusable KQL hunts that surface brute force and anomalous process activity",
     blurb:
       "Wrote KQL across sign in and device tables to hunt brute force attempts, impossible travel and unusual process execution, then packaged the queries as a reusable hunting set with notes on the signal behind each one.",
@@ -106,7 +106,7 @@ export const projects = [
   {
     title: "Incident investigation and IR runbook",
     domain: "Security operations",
-    cert: "SC-200",
+    cert: "SOC",
     outcome: "A repeatable triage path that shortens time to a decision",
     blurb:
       "Triaged incidents in Microsoft Defender, reconstructed alert timelines across identity and endpoint, scoped blast radius, and wrote a short incident response runbook so the same investigation can be repeated under pressure.",
@@ -124,7 +124,7 @@ export const projects = [
   {
     title: "Segmented enterprise network",
     domain: "Networking",
-    cert: "CCNA",
+    cert: "Network",
     outcome: "A defensible network design with isolation built in, not bolted on",
     blurb:
       "Designed a segmented network with VLANs, 802.1Q trunking and inter VLAN routing, then hardened the access layer with port security and disabled unused services. Segmentation chosen so a compromise in one zone does not become a compromise of all of them.",
@@ -133,7 +133,7 @@ export const projects = [
   {
     title: "OSPF routing with ACL filtering",
     domain: "Networking",
-    cert: "CCNA",
+    cert: "Network",
     outcome: "Dynamic routing plus least privilege traffic control between segments",
     blurb:
       "Configured OSPF for dynamic routing across a multi segment topology, then applied access control lists to enforce least privilege traffic flow between segments and log what was denied.",
@@ -144,19 +144,18 @@ export const projects = [
 // Kept for any view that still expects the old shape.
 export const certProjects = projects;
 
+// Home-page preview. Earned credentials only; in-progress ones live on the
+// Certifications page under their own honest heading.
 export const certHighlights = [
   { issuer: "IBM", name: "Cybersecurity Analyst" },
-  { issuer: "Microsoft", name: "SC-200 Security Operations" },
-  { issuer: "Cisco", name: "CCNA" },
-  { issuer: "TryHackMe", name: "Jr Penetration Tester" },
   { issuer: "Cisco", name: "CCST Cybersecurity" },
+  { issuer: "TryHackMe", name: "Jr Penetration Tester" },
   { issuer: "IBM", name: "Pen Testing, IR & Forensics" },
+  { issuer: "Coursera", name: "Cyber Threat Intelligence" },
+  { issuer: "Cisco", name: "Network Defense" },
 ];
 
 export const certsCompleted = [
-  { issuer: "Microsoft", name: "SC-200, Security Operations Analyst" },
-  { issuer: "Cisco", name: "CCNA, Cisco Certified Network Associate" },
-  { issuer: "n8n", name: "Automation 101, 102 & 103" },
   { issuer: "IBM", name: "Cybersecurity Analyst, Professional Certificate" },
   { issuer: "TryHackMe", name: "Jr Penetration Tester" },
   { issuer: "IBM", name: "Penetration Testing, Incident Response & Forensics" },
@@ -177,18 +176,24 @@ export const certsCompleted = [
   { issuer: "Princeton", name: "Bitcoin & Cryptocurrency Technologies" },
 ];
 
-// Security relevant research only.
+// Security relevant research only, from the authoritative publication list.
 export const securityResearch = [
   {
     cite:
+      "Haq, M. I. U., Manj, U. J., Paracha, S. Q., Imam, Y., Rizvi, D. Q., & Farooqi, A. R. (2026). Neuro-symbolic AI-driven secure communication framework for autonomous cyber-physical systems.",
+    venue: "APAN 2026, Track 2: AI, Machine Learning and Computer Vision.",
+    status: "Accepted",
+  },
+  {
+    cite:
       "Haq, M. I. U., Manj, U. J., Farooqi, A. R., Rizvi, D. Q., Paracha, S. Q., & Rizvi, S. H. H. (2026). Cognitive cyber communication architecture with self-evolving AI agents for zero-trust 6G networks.",
-    venue: "APAN 2026, Future Internet and R&E Networks track.",
+    venue: "APAN 2026, Track 1: Future Internet, R&E Networks and Infrastructure.",
     status: "Submitted",
   },
   {
     cite:
-      "Haq, M. I. U., Manj, U. J., Paracha, S. Q., Imam, Y., Rizvi, D. Q., & Farooqi, A. R. (2026). Neuro-symbolic AI-driven secure communication framework for autonomous cyber-physical systems.",
-    venue: "APAN 2026, AI, Machine Learning and Computer Vision track.",
+      "Haq, M. I. U., Manj, U. J., Qamar, D., Imam, Y., Yasin, J., & Perwaiz, N. (2026). Rethinking intrusion detection evaluation: evidence of performance inflation under random data splits.",
+    venue: "FIT26, Machine Learning and its Applications Track.",
     status: "Submitted",
   },
 ];
@@ -202,5 +207,5 @@ export const navGrid = [
 
 export const now = {
   date: "June 2026",
-  text: "Building out my detection home lab and looking for a full time security analyst or cybersecurity analyst role in Auckland.",
+  text: "Building out my detection home lab and looking for a security analyst role in Auckland.",
 };

@@ -6,7 +6,6 @@ import Home from "./pages/Home.jsx";
 import Certifications from "./pages/Certifications.jsx";
 import Research from "./pages/Research.jsx";
 import Playground from "./pages/Playground.jsx";
-import Guestbook from "./pages/Guestbook.jsx";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -28,7 +27,6 @@ export default function App() {
           <Route path="/certifications" element={<Certifications />} />
           <Route path="/research" element={<Research />} />
           <Route path="/playground" element={<Playground />} />
-          <Route path="/guestbook" element={<Guestbook />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>

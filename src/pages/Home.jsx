@@ -3,10 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { profile, focus, stack, marqueeA, marqueeB, experience, certHighlights, navGrid, now } from "../data.js";
+import { profile, stack, experience, certHighlights, projects } from "../data.js";
 import { Reveal, Stagger, StaggerItem, SpotlightCard, Magnetic } from "../lib/motion.jsx";
-import Marquee from "../components/Marquee.jsx";
-import WorldStrip from "../components/WorldStrip.jsx";
 import HeroCanvas from "../components/HeroCanvas.jsx";
 import Footer from "../components/Footer.jsx";
 
@@ -19,21 +17,39 @@ function Row({ label, children, id }) {
   );
 }
 
+function ProjectCard({ p }) {
+  return (
+    <SpotlightCard className="proj-card lab-card">
+      <div className="lab-top">
+        <h3>{p.title}</h3>
+        <span className="lab-cert">{p.cert}</span>
+      </div>
+      {p.outcome && <p className="proj-outcome">{p.outcome}</p>}
+      <p>{p.blurb}</p>
+      {p.tags && (
+        <div className="mini-tags">
+          {p.tags.map((t) => (<span key={t}>{t}</span>))}
+        </div>
+      )}
+    </SpotlightCard>
+  );
+}
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const heroRef = useRef(null);
+  const featured = projects.find((p) => p.featured);
+  // Lead with the SOC work, since Security/SOC Analyst is the target role.
+  const topProjects = projects.filter((p) => p !== featured && p.domain === "Security operations").slice(0, 2);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = heroRef.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      // Gentle parallax as the hero scrolls away. Opacity is left alone so the
-      // framer-motion entrance fade and GSAP never fight over the same value.
-      // fromTo + immediateRender:false stops GSAP capturing the mid-entrance
-      // state as its scroll-start, which previously snapped the portrait to
-      // invisible on the first scroll.
+      // Gentle parallax as the hero scrolls away. Opacity is left to the
+      // framer-motion entrance so the two never fight over the same value.
       gsap.fromTo(".hero-portrait",
         { yPercent: 0 },
         { yPercent: -12, ease: "none", immediateRender: false,
@@ -43,7 +59,6 @@ export default function Home() {
         { yPercent: -6, ease: "none", immediateRender: false,
           scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.6, invalidateOnRefresh: true } });
     }, el);
-    // Recompute trigger positions once the portrait image has loaded.
     const onLoad = () => ScrollTrigger.refresh();
     window.addEventListener("load", onLoad);
     return () => { window.removeEventListener("load", onLoad); ctx.revert(); };
@@ -51,7 +66,7 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero: who I am + one clear path in */}
       <section className="hero hero-split" ref={heroRef}>
         <div className="hero-copy">
           <motion.div className="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
@@ -67,9 +82,9 @@ export default function Home() {
           </motion.h1>
           <Reveal as="p" className="hero-body" delay={0.1}>{profile.intro}</Reveal>
           <Stagger className="profiles" gap={0.06}>
+            <StaggerItem as="span"><Magnetic as={Link} className="pill" to="/playground">View projects</Magnetic></StaggerItem>
             <StaggerItem as="span"><Magnetic as="a" className="pill" href={profile.github} target="_blank" rel="noopener">GitHub</Magnetic></StaggerItem>
             <StaggerItem as="span"><Magnetic as="a" className="pill" href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</Magnetic></StaggerItem>
-            <StaggerItem as="span"><Magnetic as="a" className="pill" href={`mailto:${profile.email}`}>Email</Magnetic></StaggerItem>
           </Stagger>
         </div>
         <motion.div
@@ -89,23 +104,32 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <Marquee items={marqueeA} speed={30} />
-
-      <Row label="About me">
-        {profile.about.map((p, i) => (
-          <Reveal as="p" key={i} className={i ? "muted" : ""} delay={i * 0.05}>{p}</Reveal>
-        ))}
-      </Row>
-
-      <Row label="Stack & tools">
-        {Object.entries(stack).map(([group, items]) => (
-          <div className="stack-group" key={group}>
-            <h4>{group}</h4>
-            <Stagger className="tags" gap={0.03} as="ul">
-              {items.map((t) => (<StaggerItem as="li" key={t}>{t}</StaggerItem>))}
-            </Stagger>
-          </div>
-        ))}
+      {/* Projects first: the evidence a hiring manager actually scans for. */}
+      <Row label="Projects" id="projects">
+        {featured && (
+          <Reveal>
+            <SpotlightCard className="proj-featured">
+              <span className="proj-featured-tag">Featured</span>
+              <div className="lab-top">
+                <h3>{featured.title}</h3>
+                <span className="lab-cert">{featured.cert}</span>
+              </div>
+              {featured.outcome && <p className="proj-outcome">{featured.outcome}</p>}
+              <p>{featured.blurb}</p>
+              {featured.tags && (
+                <div className="mini-tags">
+                  {featured.tags.map((t) => (<span key={t}>{t}</span>))}
+                </div>
+              )}
+            </SpotlightCard>
+          </Reveal>
+        )}
+        <Stagger className="proj-stack" gap={0.05}>
+          {topProjects.map((p) => (
+            <StaggerItem key={p.title}><ProjectCard p={p} /></StaggerItem>
+          ))}
+        </Stagger>
+        <div className="see-all"><Link className="alink" to="/playground">See all projects</Link></div>
       </Row>
 
       <Row label="Experience" id="experience">
@@ -118,6 +142,17 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
+      </Row>
+
+      <Row label="Stack & tools">
+        {Object.entries(stack).map(([group, items]) => (
+          <div className="stack-group" key={group}>
+            <h4>{group}</h4>
+            <Stagger className="tags" gap={0.03} as="ul">
+              {items.map((t) => (<StaggerItem as="li" key={t}>{t}</StaggerItem>))}
+            </Stagger>
+          </div>
+        ))}
       </Row>
 
       <Row label="Certifications">
@@ -136,39 +171,12 @@ export default function Home() {
         <div className="see-all"><Link className="alink" to="/certifications">See all certifications</Link></div>
       </Row>
 
-      <Marquee items={marqueeB} reverse speed={36} />
-
-      <Reveal as="p" className="cta-line">Got a role or a project? <span className="hl">Let's talk.</span></Reveal>
-
       <Row label="Contact">
         <div className="kv">
           <a className="alink" href={`mailto:${profile.email}`}>{profile.email}</a>
           <a className="alink" href={`tel:${profile.phone.replace(/\s/g, "")}`}>{profile.phone}</a>
           <span className="muted">{profile.location}</span>
         </div>
-      </Row>
-
-      <Row label="Time & weather"><WorldStrip /></Row>
-
-      <Row label="Explore">
-        <Stagger className="nav-grid" gap={0.05}>
-          {navGrid.map((n) => (
-            <StaggerItem key={n.to}>
-              <Link to={n.to}>
-                <SpotlightCard className="nav-card">
-                  <span className="nav-card-label">{n.label}</span>
-                  <span className="nav-card-note">{n.note}</span>
-                  <span className="nav-card-arrow">↗</span>
-                </SpotlightCard>
-              </Link>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Row>
-
-      <Row label="Now">
-        <Reveal as="p">{now.text}</Reveal>
-        <Reveal as="p" className="muted" delay={0.05}>Updated {now.date}.</Reveal>
       </Row>
 
       <Footer />
