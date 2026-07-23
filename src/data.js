@@ -44,28 +44,28 @@ export const marqueeB = ["Microsoft Sentinel", "KQL", "MITRE ATT&CK", "Wireshark
 
 export const experience = [
   {
-    role: "Program Manager, Technical Education",
+    role: "Program Manager",
     org: "Coding, Robotics & AI Learning Project, NUST",
     date: "2024 to 2025",
     blurb:
       "Ran a national training program covering cybersecurity, networking and AI, coordinating 80 instructors, setting delivery standards and reporting on quality and outcomes.",
   },
   {
-    role: "Instructor, Blockchain & Cybersecurity",
+    role: "Instructor",
     org: "HISDP, AI Lounge & Murabbi, NUST",
     date: "2023 to 2024",
     blurb:
       "Taught smart contract security, blockchain security and security tooling, built the hands on labs and capture the flag style assessments, and won a Best Instructor award.",
   },
   {
-    role: "Security Researcher",
+    role: "Research Associate",
     org: "COGNET Lab, SEECS, NUST",
     date: "2022 to 2023",
     blurb:
       "Researched post quantum cryptography and hardened machine learning models against adversarial attacks, working through threat models and defensive techniques, and mentored junior researchers.",
   },
   {
-    role: "Secure Systems Researcher",
+    role: "Research Assistant",
     org: "COGNET Lab, SEECS, NUST",
     date: "2021 to 2022",
     blurb:
@@ -73,7 +73,7 @@ export const experience = [
   },
   {
     role: "Network Engineer",
-    org: "Dewaan Networking Solutions",
+    org: "Nexalink",
     date: "2016 to 2017",
     blurb:
       "Configured and hardened routers, switches and firewalls, set up VLAN segmentation and access control lists, monitored traffic, and secured IoT deployments.",
