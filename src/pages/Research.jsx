@@ -9,9 +9,9 @@ export default function Research() {
         <Reveal as="div" className="label">Applied research</Reveal>
         <Reveal as="h1" delay={0.05}>Security research</Reveal>
         <Reveal as="p" delay={0.1}>
-          A selection of my security focused work, from my time at NUST's COGNET Lab and ongoing
-          collaborations. The themes are zero-trust network design, secure communication for
-          cyber-physical systems, cryptography and adversarial machine learning. My name is in bold.
+          Security focused research from COGNET Lab and ongoing collaborations: zero trust network
+          design, secure communication for cyber-physical systems, cryptography and adversarial
+          machine learning. My name is in bold.
         </Reveal>
       </div>
 

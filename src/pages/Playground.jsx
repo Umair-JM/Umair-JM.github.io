@@ -45,9 +45,7 @@ export default function Playground() {
         <Reveal as="div" className="label">Selected work</Reveal>
         <Reveal as="h1" delay={0.05}>Projects</Reveal>
         <Reveal as="p" delay={0.1}>
-          Security and networking projects framed by what they delivered, from SOC detections and
-          incident response to network segmentation and routing. Each one is hands on, with the
-          tools and the outcome called out so you can see the depth fast.
+          Security and networking projects, each framed by the outcome and the tools used.
         </Reveal>
       </div>
 

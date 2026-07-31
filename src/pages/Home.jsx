@@ -1,11 +1,7 @@
-import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { profile, stack, experience, certHighlights, projects } from "../data.js";
-import { Reveal, Stagger, StaggerItem, SpotlightCard, Magnetic } from "../lib/motion.jsx";
-import HeroCanvas from "../components/HeroCanvas.jsx";
+import { profile, focus, stack, experience, certHighlights, projects } from "../data.js";
+import { Reveal, Stagger, StaggerItem, SpotlightCard } from "../lib/motion.jsx";
 import Footer from "../components/Footer.jsx";
 
 function Row({ label, children, id }) {
@@ -35,42 +31,19 @@ function ProjectCard({ p }) {
   );
 }
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function Home() {
-  const heroRef = useRef(null);
   const featured = projects.find((p) => p.featured);
-  // Lead with the SOC work, since Security/SOC Analyst is the target role.
+  // SOC projects stay up top: they are the hands-on evidence behind the
+  // governance + security positioning.
   const topProjects = projects.filter((p) => p !== featured && p.domain === "Security operations").slice(0, 2);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const el = heroRef.current;
-    if (!el) return;
-    const ctx = gsap.context(() => {
-      // Gentle parallax as the hero scrolls away. Opacity is left to the
-      // framer-motion entrance so the two never fight over the same value.
-      gsap.fromTo(".hero-portrait",
-        { yPercent: 0 },
-        { yPercent: -12, ease: "none", immediateRender: false,
-          scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.4, invalidateOnRefresh: true } });
-      gsap.fromTo(".hero-copy",
-        { yPercent: 0 },
-        { yPercent: -6, ease: "none", immediateRender: false,
-          scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.6, invalidateOnRefresh: true } });
-    }, el);
-    const onLoad = () => ScrollTrigger.refresh();
-    window.addEventListener("load", onLoad);
-    return () => { window.removeEventListener("load", onLoad); ctx.revert(); };
-  }, []);
 
   return (
     <>
       {/* Hero: who I am + one clear path in */}
-      <section className="hero hero-split" ref={heroRef}>
+      <section className="hero hero-split">
         <div className="hero-copy">
           <motion.div className="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-            Cybersecurity & Networking
+            {profile.role}
           </motion.div>
           <motion.h1
             className="hero-lead"
@@ -78,13 +51,13 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            I secure <span className="hl">networks</span> and the systems that run on them.
+            I work on <span className="hl">data governance</span>, AI risk and information security.
           </motion.h1>
           <Reveal as="p" className="hero-body" delay={0.1}>{profile.intro}</Reveal>
           <Stagger className="profiles" gap={0.06}>
-            <StaggerItem as="span"><Magnetic as={Link} className="pill" to="/playground">View projects</Magnetic></StaggerItem>
-            <StaggerItem as="span"><Magnetic as="a" className="pill" href={profile.github} target="_blank" rel="noopener">GitHub</Magnetic></StaggerItem>
-            <StaggerItem as="span"><Magnetic as="a" className="pill" href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</Magnetic></StaggerItem>
+            <StaggerItem as="span"><Link className="pill" to="/playground">View projects</Link></StaggerItem>
+            <StaggerItem as="span"><a className="pill" href={profile.github} target="_blank" rel="noopener">GitHub</a></StaggerItem>
+            <StaggerItem as="span"><a className="pill" href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</a></StaggerItem>
           </Stagger>
         </div>
         <motion.div
@@ -93,18 +66,17 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <HeroCanvas />
-          <motion.img
-            src="/portrait.png"
-            alt="Umair Javaid Manj"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            draggable="false"
-          />
+          <img src="/portrait.png" alt="Umair Javaid Manj" draggable="false" />
         </motion.div>
       </section>
 
-      {/* Projects first: the evidence a hiring manager actually scans for. */}
+      <Row label="Focus" id="focus">
+        <Stagger className="tags" gap={0.03} as="ul">
+          {focus.map((f) => (<StaggerItem as="li" key={f}>{f}</StaggerItem>))}
+        </Stagger>
+      </Row>
+
+      {/* Projects: the evidence a hiring manager actually scans for. */}
       <Row label="Projects" id="projects">
         {featured && (
           <Reveal>

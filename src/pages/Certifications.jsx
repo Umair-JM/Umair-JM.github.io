@@ -24,9 +24,9 @@ export default function Certifications() {
         <Reveal as="div" className="label">Credentials</Reveal>
         <Reveal as="h1" delay={0.05}>Certifications</Reveal>
         <Reveal as="p" delay={0.1}>
-          More than 20 certifications across Microsoft, Cisco, IBM, TryHackMe and Coursera, spanning
-          security operations, penetration testing, threat intelligence, incident response and
-          network defense.
+          A curated set of credentials, matching my LinkedIn: cloud security, security operations,
+          incident response, AI and statistics, from Microsoft, IBM, TryHackMe, Princeton and
+          LinkedIn Learning.
         </Reveal>
       </div>
 
