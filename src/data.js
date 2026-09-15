@@ -164,12 +164,6 @@ export const securityResearch = [
   },
   {
     cite:
-      "Manj, U. J., Haq, M. I. U., Qamar, D., Ali, H., Perwaiz, N., & Imam, Y. (2026). Cognitive cyber communication architecture with self-evolving AI agents for zero-trust 6G networks.",
-    venue: "International Conference on Digital Futures and Transformative Technologies (ICoDT2 2026).",
-    status: "Submitted",
-  },
-  {
-    cite:
       "Haq, M. I. U., Manj, U. J., Qamar, D., Imam, Y., Yasin, J., & Perwaiz, N. (2026). Rethinking intrusion detection evaluation: evidence of performance inflation under random data splits.",
     venue: "FIT26, Machine Learning and its Applications Track.",
     status: "Submitted",
