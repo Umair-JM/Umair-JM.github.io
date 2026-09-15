@@ -160,18 +160,30 @@ export const securityResearch = [
     cite:
       "Haq, M. I. U., Manj, U. J., Paracha, S. Q., Imam, Y., Rizvi, D. Q., & Farooqi, A. R. (2026). Neuro-symbolic AI-driven secure communication framework for autonomous cyber-physical systems.",
     venue: "APAN 2026, Track 2: AI, Machine Learning and Computer Vision.",
-    status: "Accepted",
+    status: "Published",
   },
   {
     cite:
-      "Haq, M. I. U., Manj, U. J., Farooqi, A. R., Rizvi, D. Q., Paracha, S. Q., & Rizvi, S. H. H. (2026). Cognitive cyber communication architecture with self-evolving AI agents for zero-trust 6G networks.",
-    venue: "APAN 2026, Track 1: Future Internet, R&E Networks and Infrastructure.",
+      "Manj, U. J., Haq, M. I. U., Qamar, D., Ali, H., Perwaiz, N., & Imam, Y. (2026). Cognitive cyber communication architecture with self-evolving AI agents for zero-trust 6G networks.",
+    venue: "International Conference on Digital Futures and Transformative Technologies (ICoDT2 2026).",
     status: "Submitted",
   },
   {
     cite:
       "Haq, M. I. U., Manj, U. J., Qamar, D., Imam, Y., Yasin, J., & Perwaiz, N. (2026). Rethinking intrusion detection evaluation: evidence of performance inflation under random data splits.",
     venue: "FIT26, Machine Learning and its Applications Track.",
+    status: "Submitted",
+  },
+  {
+    cite:
+      "Murad, M. A., Manj, U. J., Haq, M. I. U., Qamar, D., & Imam, Y. (2026). Rethinking intrusion detection evaluation: evidence from temporal and unseen attack generalization.",
+    venue: "FIT26, Machine Learning and its Applications Track.",
+    status: "Submitted",
+  },
+  {
+    cite:
+      "Haq, M. I. U., Manj, U. J., Qamar, D., Fatima, K., Imam, Y., & Rizvi, H. (2026). Quantized CNN–Transformer inference on FPGA for real-time RF spectrum intelligence and adaptive jamming defense.",
+    venue: "Engineering Reports.",
     status: "Submitted",
   },
 ];
