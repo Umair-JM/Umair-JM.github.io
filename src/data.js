@@ -45,7 +45,7 @@ export const experience = [
     role: "Program Manager",
     org: "Coding, Robotics & AI Learning Project, NUST",
     date: "2024 to 2025",
-    blurb: "Led a national cybersecurity, networking and AI training program with 80 instructors.",
+    blurb: "Ran a national cybersecurity, networking and AI training program, from scheduling and delivery through to reporting.",
   },
   {
     role: "Instructor",
