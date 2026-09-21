@@ -12,7 +12,7 @@ export const profile = {
   github: "https://github.com/Umair-JM",
   linkedin: "https://linkedin.com/in/umairjm",
   intro:
-    "My path started with networks. I configured and hardened the kit that keeps traffic moving, then moved into security research, teaching and SOC lab work. From August 2026 I am a Data & AI Governance Analyst at the Centre for Chiropractic Research in Auckland, working on research data governance, AI risk and information security. I am open to GRC, security analyst and AI governance roles in Auckland.",
+    "My path started with networks. I configured and hardened the kit that keeps traffic moving, then moved into security research and teaching, and built a SOC home lab. From August 2026 I am a Data & AI Governance Analyst at the Centre for Chiropractic Research in Auckland, working on research data governance, AI risk and information security. I am open to GRC, security analyst and AI governance roles in Auckland.",
 };
 
 export const focus = [
@@ -119,7 +119,7 @@ export const projects = [
     outcome: "A defensible network design with isolation built in, not bolted on",
     blurb:
       "Designed a segmented network with VLANs, 802.1Q trunking and inter VLAN routing, then hardened the access layer.",
-    tags: ["VLANs", "Inter-VLAN routing", "Port security", "Cisco IOS"],
+    tags: ["VLANs", "Inter VLAN routing", "Port security", "Cisco IOS"],
   },
   {
     title: "OSPF routing with ACL filtering",
@@ -136,7 +136,7 @@ export const projects = [
 export const certHighlights = [
   { issuer: "IBM", name: "Cybersecurity Analyst" },
   { issuer: "Microsoft", name: "AI Skills Fest 2026, Cloud Security" },
-  { issuer: "LinkedIn", name: "Statistics Foundations 1–3" },
+  { issuer: "LinkedIn", name: "Statistics Foundations 1 to 3" },
   { issuer: "Global AI Community", name: "Agents League, Creative Apps" },
   { issuer: "IBM", name: "Incident Response & Digital Forensics" },
   { issuer: "TryHackMe", name: "Jr Penetration Tester" },
@@ -147,7 +147,7 @@ export const certsCompleted = [
   { issuer: "IBM", name: "Cybersecurity Analyst Specialization" },
   { issuer: "Microsoft", name: "AI Skills Fest 2026, Cloud Security" },
   { issuer: "Global AI Community", name: "Agents League, Creative Apps" },
-  { issuer: "LinkedIn", name: "Statistics Foundations 1–3" },
+  { issuer: "LinkedIn", name: "Statistics Foundations 1 to 3" },
   { issuer: "IBM", name: "Incident Response and Digital Forensics" },
   { issuer: "IBM", name: "Cybersecurity Assessment: CompTIA Security+ & CySA+" },
   { issuer: "TryHackMe", name: "Jr Penetration Tester Learning Path" },
