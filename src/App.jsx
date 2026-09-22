@@ -13,12 +13,13 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const { pathname } = useLocation();
   return (
     <>
       <div className="bg-fx" aria-hidden />
       <a className="skip-link" href="#main">Skip to content</a>
       <ScrollToTop />
-      <main className="page" id="main">
+      <main className={pathname === "/" ? "page page-wide" : "page"} id="main">
         <TopBar />
         <Routes>
           <Route path="/" element={<Home />} />

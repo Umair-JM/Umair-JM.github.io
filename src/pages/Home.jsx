@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { profile, focus, stack, experience, certHighlights, projects } from "../data.js";
 import { Reveal, Stagger, StaggerItem, SpotlightCard } from "../lib/motion.jsx";
 import Footer from "../components/Footer.jsx";
+import Hoops from "../components/Hoops.jsx";
 
 function Row({ label, children, id }) {
   return (
@@ -38,7 +39,8 @@ export default function Home() {
   const topProjects = projects.filter((p) => p !== featured && p.domain === "Security operations").slice(0, 2);
 
   return (
-    <>
+    <div className="home-grid">
+      <div className="home-left">
       {/* Hero: who I am + one clear path in */}
       <section className="hero hero-split">
         <div className="hero-copy">
@@ -151,7 +153,14 @@ export default function Home() {
         </div>
       </Row>
 
+      </div>
+
+      {/* Something to do while the profile loads in your head. */}
+      <aside className="home-right" aria-label="Basketball game">
+        <Hoops />
+      </aside>
+
       <Footer />
-    </>
+    </div>
   );
 }
