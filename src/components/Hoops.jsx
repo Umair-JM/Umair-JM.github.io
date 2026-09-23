@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { createGame, aimVelocity, previewPath, BALL_R, START, HOOP, BOARD } from "../lib/hoopsPhysics.js";
+import { CARDS } from "../lib/aiSecurityCards.js";
+import { profile } from "../data.js";
+
+// A card every second hoop, and after this many cards the pitch appears.
+const HOOPS_PER_CARD = 2;
+const CARDS_BEFORE_PITCH = 10;
 
 /* ---------------------------------------------------------------------------
    Hoops: slingshot basketball, aimed the way Angry Birds is aimed.
@@ -18,6 +24,9 @@ const BALL_SEAM = "rgba(60, 25, 5, 0.55)";
 const SWEET_FRAC = 0.26;  // a pull this share of the canvas height is the swish
 const MAX_FRAC = 0.36;    // the bands stop stretching here
 const FORK = { x: 0.48, y: 1.2, z: -0.35 };   // slingshot arms, metres
+const BASELINE = 9.2;   // back line of the court, metres
+const FT_Z = 5.2;       // free throw line
+const THREE_R = 2.9;    // three point radius, scaled to this stylised court
 
 function readTheme() {
   const cs = getComputedStyle(document.documentElement);
@@ -25,18 +34,21 @@ function readTheme() {
   return { accent: v("--accent"), ink: v("--ink"), bg: v("--bg"), bg2: v("--bg-2"), line: v("--line"), muted: v("--muted"), card: v("--card") };
 }
 
-function loadBest() {
-  try { return Number(localStorage.getItem("hoops-best")) || 0; } catch { return 0; }
+function loadNum(key) {
+  try { return Number(localStorage.getItem(key)) || 0; } catch { return 0; }
 }
-function saveBest(n) {
-  try { localStorage.setItem("hoops-best", String(n)); } catch { /* private mode */ }
+function saveNum(key, n) {
+  try { localStorage.setItem(key, String(n)); } catch { /* private mode */ }
 }
 
 export default function Hoops() {
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState(loadBest);
+  const [best, setBest] = useState(() => loadNum("hoops-best"));
+  // Total hoops made across visits. Cards unlock off this, not off the
+  // session score, so a visitor can come back and carry on.
+  const [made, setMade] = useState(() => loadNum("hoops-made"));
   const [streak, setStreak] = useState(0);
 
   useEffect(() => {
@@ -58,16 +70,22 @@ export default function Hoops() {
     const sweetLen = () => H * SWEET_FRAC;
     const maxLen = () => H * MAX_FRAC;
 
+    let spin = 0;         // radians the ball has rolled through in flight
+    let squash = 0;       // 1 right after a floor bounce, fading out
+    let lastBounces = 0;
     let pull = null;      // { dx, dy } current stretch, pixels, dy down = pulled back
     let aim = null;       // velocity the current pull would launch with
     let trail = [];       // world points of the shot in flight
     let doneAt = 0, swish = 0, tallied = false;
-    let pts = 0, run = 0, bestLocal = loadBest();
+    let pts = 0, run = 0, bestLocal = loadNum("hoops-best"), madeTotal = loadNum("hoops-made");
 
     const resize = () => {
       const w = Math.max(240, Math.round(wrap.clientWidth));
-      // Tall enough that a full pull straight down still fits under the ball.
-      W = w; H = Math.round(w * 1.45); dpr = Math.min(2, window.devicePixelRatio || 1);
+      // Tall enough that a full pull straight down still fits under the ball,
+      // but never so tall that the card below it falls off a short screen.
+      // Every distance in the game is a fraction of H, so capping stays fair.
+      W = w; H = Math.round(Math.min(w * 1.45, Math.max(300, window.innerHeight * 0.56)));
+      dpr = Math.min(2, window.devicePixelRatio || 1);
       canvas.width = W * dpr; canvas.height = H * dpr;
       canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -75,6 +93,7 @@ export default function Hoops() {
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
+    window.addEventListener("resize", resize);
 
     // Where the ball sits while the bands are stretched.
     const nockedAt = () => {
@@ -85,6 +104,22 @@ export default function Hoops() {
     // ---- drawing -------------------------------------------------------
     const ellipse = (cx, cy, rx, ry) => { ctx.beginPath(); ctx.ellipse(cx, cy, Math.max(rx, 0.1), Math.max(ry, 0.1), 0, 0, Math.PI * 2); };
 
+    // A line on the floor, given in world metres and projected point by point
+    // so it keeps its perspective.
+    const poly = (pts) => {
+      if (pts.length < 2) return;
+      ctx.beginPath();
+      pts.forEach((q, i) => {
+        const p = project(q.x, 0, q.z);
+        if (i === 0) ctx.moveTo(p.sx, p.sy); else ctx.lineTo(p.sx, p.sy);
+      });
+      ctx.stroke();
+    };
+    const arc = (cx, cz, r, a0, a1, n) => Array.from({ length: n + 1 }, (_, i) => {
+      const a = a0 + ((a1 - a0) * i) / n;
+      return { x: cx + Math.sin(a) * r, z: cz - Math.cos(a) * r };
+    });
+
     const drawCourt = (t) => {
       ctx.fillStyle = t.card; ctx.fillRect(0, 0, W, H);
       const back = project(0, 0, 9.2).sy;
@@ -94,19 +129,21 @@ export default function Hoops() {
       const floor = ctx.createLinearGradient(0, back, 0, H);
       floor.addColorStop(0, t.bg2); floor.addColorStop(1, t.bg);
       ctx.fillStyle = floor; ctx.fillRect(0, back, W, H - back);
-      ctx.strokeStyle = t.line; ctx.lineWidth = 1;
-      for (let x = -3; x <= 3; x += 1) {
+      // Floorboards running away from the camera.
+      ctx.strokeStyle = t.line; ctx.lineWidth = 1; ctx.globalAlpha = 0.35;
+      for (let x = -3.2; x <= 3.2; x += 0.4) {
         const a = project(x, 0, -1), b = project(x, 0, 9.2);
         ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy); ctx.stroke();
       }
-      for (let z = 1; z <= 9; z += 2) {
-        const y = project(0, 0, z).sy;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      }
-      ctx.beginPath(); ctx.moveTo(0, back); ctx.lineTo(W, back); ctx.stroke();
-      const k = [project(-0.9, 0, 5.2), project(0.9, 0, 5.2), project(0.9, 0, 9.2), project(-0.9, 0, 9.2)];
-      ctx.strokeStyle = t.accent; ctx.globalAlpha = 0.5;
-      ctx.beginPath(); ctx.moveTo(k[0].sx, k[0].sy); k.slice(1).forEach((q) => ctx.lineTo(q.sx, q.sy)); ctx.closePath(); ctx.stroke();
+      ctx.globalAlpha = 1;
+      // Half court markings. Court paint reads as paint, so it stays in the
+      // line colour; the key keeps the accent so the target area still leads.
+      ctx.strokeStyle = t.ink; ctx.globalAlpha = 0.22; ctx.lineWidth = 1.3;
+      poly([{ x: -3.2, z: BASELINE }, { x: 3.2, z: BASELINE }]);
+      poly(arc(0, FT_Z, 0.9, -Math.PI, Math.PI, 30));
+      poly(arc(0, HOOP.z, THREE_R, -Math.PI / 2, Math.PI / 2, 36).filter((q) => q.z <= BASELINE));
+      ctx.strokeStyle = t.accent; ctx.globalAlpha = 0.45; ctx.lineWidth = 1.4;
+      poly([{ x: -0.9, z: FT_Z }, { x: 0.9, z: FT_Z }, { x: 0.9, z: BASELINE }, { x: -0.9, z: BASELINE }, { x: -0.9, z: FT_Z }]);
       ctx.globalAlpha = 1;
     };
 
@@ -138,8 +175,14 @@ export default function Hoops() {
 
     const drawNetAndRimFront = (t, now) => {
       const { cx, cy, rx, ry } = rimGeom();
-      const sw = swish && now - swish < 320 ? 1 + 0.25 * Math.sin(((now - swish) / 320) * Math.PI) : 1;
-      const depth = rx * 1.15 * sw, rx2 = rx * 0.62;
+      // The net stretches for the ball passing through it, then rebounds.
+      const through = Math.max(0, Math.min(1, (HOOP.y - ball.y) / 0.9));
+      const near = Math.hypot(ball.x - HOOP.x, ball.z - HOOP.z) < HOOP.r * 1.3 && ball.vy < 0;
+      const pushed = near ? through : 0;
+      const rebound = swish && now - swish < 420 ? 0.18 * Math.sin(((now - swish) / 420) * Math.PI * 2) : 0;
+      const sw = 1 + pushed * 0.45 + rebound;
+      const bulge = 1 + pushed * 0.35;
+      const depth = rx * 1.15 * sw, rx2 = rx * 0.62 * bulge;
       ctx.strokeStyle = t.muted; ctx.lineWidth = 1; ctx.globalAlpha = 0.9;
       for (let i = 0; i < 10; i++) {
         const a = (i / 10) * Math.PI * 2;
@@ -229,14 +272,21 @@ export default function Hoops() {
         ellipse(sh.sx, sh.sy, r * (1 + h * 0.08), r * 0.32 * (1 + h * 0.08)); ctx.fill();
         ctx.globalAlpha = 1;
       }
+      // Squash on the vertical axis just after a bounce, then back to round.
+      const sx = 1 + squash * 0.18, sy = 1 - squash * 0.18;
       const g = ctx.createRadialGradient(p.sx - r * 0.35, p.sy - r * 0.4, r * 0.1, p.sx, p.sy, r);
       g.addColorStop(0, "#ffb15c"); g.addColorStop(0.6, BALL_COLOR); g.addColorStop(1, "#b85e12");
-      ctx.fillStyle = g; ellipse(p.sx, p.sy, r, r); ctx.fill();
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.ellipse(p.sx, p.sy, r * sx, r * sy, 0, 0, Math.PI * 2); ctx.fill();
+      // Seams turn with the ball. The shading stays put, since the light does.
+      ctx.save();
+      ctx.translate(p.sx, p.sy); ctx.rotate(spin); ctx.scale(sx, sy);
       ctx.strokeStyle = BALL_SEAM; ctx.lineWidth = Math.max(1, r * 0.07);
-      ctx.beginPath(); ctx.moveTo(p.sx - r, p.sy); ctx.lineTo(p.sx + r, p.sy); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(p.sx, p.sy - r); ctx.lineTo(p.sx, p.sy + r); ctx.stroke();
-      ctx.beginPath(); ctx.arc(p.sx - r * 1.05, p.sy, r * 0.95, -0.9, 0.9); ctx.stroke();
-      ctx.beginPath(); ctx.arc(p.sx + r * 1.05, p.sy, r * 0.95, Math.PI - 0.9, Math.PI + 0.9); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-r, 0); ctx.lineTo(r, 0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke();
+      ctx.beginPath(); ctx.arc(-r * 1.05, 0, r * 0.95, -0.9, 0.9); ctx.stroke();
+      ctx.beginPath(); ctx.arc(r * 1.05, 0, r * 0.95, Math.PI - 0.9, Math.PI + 0.9); ctx.stroke();
+      ctx.restore();
       return r;
     };
 
@@ -275,17 +325,27 @@ export default function Hoops() {
     const frame = (now) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
       const flying = game.mode === "fly";
+      const was = { x: ball.x, y: ball.y, z: ball.z };
       for (let i = 0; i < 3; i++) game.step(dt / 3); // substeps keep the rim test reliable
-      if (flying) trail.push({ x: ball.x, y: ball.y, z: ball.z });
+      if (flying) {
+        // Backspin: the ball turns through the distance it travels, the way a
+        // shot ball does, and a floor bounce squashes it for a moment.
+        const moved = Math.hypot(ball.x - was.x, ball.y - was.y, ball.z - was.z);
+        spin -= moved / (BALL_R * 2 * Math.PI) * Math.PI * 2 * 0.55;
+        if (game.bounces > lastBounces) { squash = 1; lastBounces = game.bounces; }
+        trail.push({ x: ball.x, y: ball.y, z: ball.z });
+      }
+      squash = Math.max(0, squash - dt * 6);
       if (trail.length > 90) trail.shift();
       if (game.scored && !tallied) {
         tallied = true; swish = now; pts += 1; run += 1;
         setScore(pts); setStreak(run);
-        if (pts > bestLocal) { bestLocal = pts; setBest(pts); saveBest(pts); }
+        if (pts > bestLocal) { bestLocal = pts; setBest(pts); saveNum("hoops-best", pts); }
+        madeTotal += 1; setMade(madeTotal); saveNum("hoops-made", madeTotal);
       }
       if (game.mode === "done") {
         if (!doneAt) { doneAt = now; if (!game.scored) { run = 0; setStreak(0); } }
-        if (now - doneAt > 700) { game.reset(); doneAt = 0; tallied = false; trail = []; }
+        if (now - doneAt > 700) { game.reset(); doneAt = 0; tallied = false; trail = []; spin = 0; squash = 0; lastBounces = 0; }
       }
       draw(now);
       raf = requestAnimationFrame(frame);
@@ -332,6 +392,7 @@ export default function Hoops() {
 
     return () => {
       cancelAnimationFrame(raf); ro.disconnect();
+      window.removeEventListener("resize", resize);
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
@@ -339,15 +400,46 @@ export default function Hoops() {
     };
   }, []);
 
+  const unlocked = Math.min(Math.floor(made / HOOPS_PER_CARD), CARDS.length);
+  const card = unlocked > 0 ? CARDS[unlocked - 1] : null;
+  const toNext = HOOPS_PER_CARD - (made % HOOPS_PER_CARD);
+  const pitch = unlocked >= CARDS_BEFORE_PITCH;
+  const deckDone = unlocked >= CARDS.length;
+
   return (
     <div className="hoops-card" ref={wrapRef}>
       <div className="hoops-head">
-        <span className="label">Shoot some hoops</span>
+        <span className="label">AI security hoops</span>
         <span className="hoops-score" aria-live="polite">
           <b>{score}</b> made{streak > 1 ? ` · ${streak} in a row` : ""}{best > 0 ? ` · best ${best}` : ""}
         </span>
       </div>
       <canvas ref={canvasRef} className="hoops-canvas" aria-label="Basketball slingshot game: pull the ball back and release to shoot" />
+      <div className="hoops-learn" aria-live="polite">
+        {card ? (
+          <>
+            <div className="hoops-learn-top">
+              <span className="hoops-sect">{card.section}</span>
+              <span className="hoops-prog">{card.tag} · {unlocked} of {CARDS.length}</span>
+            </div>
+            <h4>{card.title}</h4>
+            <p>{card.body}</p>
+            {pitch ? (
+              <p className="hoops-pitch">
+                {deckDone ? "That is the whole deck." : `That is ${unlocked} cards.`} For the rest of it,{" "}
+                <a href={`mailto:${profile.email}?subject=AI%20security%20work`}>hire me</a>.
+              </p>
+            ) : (
+              <p className="hoops-next">Next card in {toNext} {toNext === 1 ? "hoop" : "hoops"}.</p>
+            )}
+          </>
+        ) : (
+          <p className="hoops-learn-empty">
+            Two hoops unlock one AI security card. {CARDS.length} of them, built on the four sections of the TryHackMe AI1 exam and tagged with OWASP LLM Top 10 identifiers.
+            {made > 0 ? ` One more hoop for the first card.` : ""}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

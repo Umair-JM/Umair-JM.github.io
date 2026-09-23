@@ -11,8 +11,6 @@ export const profile = {
   phone: "+64 20 4483186",
   github: "https://github.com/Umair-JM",
   linkedin: "https://linkedin.com/in/umairjm",
-  intro:
-    "My path started with networks. I configured and hardened the kit that keeps traffic moving, then moved into security research and teaching, and built a SOC home lab. I am now the Data & AI Governance Analyst at the Centre for Chiropractic Research in Auckland, where I look after research data governance, AI risk and information security. I am open to GRC, security analyst and AI governance roles in Auckland.",
 };
 
 export const focus = [

@@ -17,13 +17,43 @@ export const START = { x: 0, y: 0.62, z: 0 };
 export const HOOP = { x: 0, y: 3.05, z: 8, r: 0.65 };
 export const BOARD = { z: 8.6, halfW: 1.1, y0: 2.75, y1: 3.9 };
 
-// The swish: drop through the hoop's centre. t = HOOP.z / vz, vy from the drop.
+// Quadratic air drag, in units of 1 / metre: a = -DRAG * |v| * v. At the
+// speeds here it takes about a fifth of gravity's bite out of the flight, so
+// the arc falls a little steeper than a vacuum parabola.
+export const DRAG = 0.02;
+
+// The swish. In a vacuum the launch is closed form, but with drag it is not,
+// so the speed that drops the ball through the centre is solved once here.
 const VZ = 7.2;
 const T = HOOP.z / VZ;
 const VY = (HOOP.y - START.y + 0.5 * G * T * T) / T;
-
-export const SWISH_SPEED = Math.hypot(VZ, VY);
 export const SWISH_ANGLE = Math.atan2(VY, VZ);  // elevation of the perfect shot
+
+/* Height at the hoop plane for a launch of this speed, drag included. */
+function heightAtHoop(speed) {
+  let { x, y, z } = START, vy = speed * Math.sin(SWISH_ANGLE), vz = speed * Math.cos(SWISH_ANGLE);
+  const dt = 1 / 600;
+  for (let i = 0; i < 6000; i++) {
+    const prevZ = z, prevY = y;
+    const sp = Math.hypot(vy, vz);
+    vy += (-G - DRAG * sp * vy) * dt;
+    vz += (-DRAG * sp * vz) * dt;
+    y += vy * dt; z += vz * dt;
+    if (z >= HOOP.z) return prevY + ((HOOP.z - prevZ) / (z - prevZ)) * (y - prevY);
+    if (y < 0) break;
+  }
+  void x;
+  return -Infinity;
+}
+
+export const SWISH_SPEED = (() => {
+  let lo = 5, hi = 25;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (heightAtHoop(mid) < HOOP.y) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+})();
 const ANGLE_SPAN = 0.28;   // radians the arc flattens by as the pull turns sideways
 const SIDE_MAX = 0.22;     // sideways speed as a fraction of forward speed
 const POWER_MIN = 0.4, POWER_MAX = 1.5;
@@ -67,7 +97,10 @@ export function createGame() {
     if (s.mode !== "fly") return;
     s.t += dt;
     const py = ball.y;
-    ball.vy -= G * dt;
+    const sp = Math.hypot(ball.vx, ball.vy, ball.vz);
+    ball.vx += -DRAG * sp * ball.vx * dt;
+    ball.vy += (-G - DRAG * sp * ball.vy) * dt;
+    ball.vz += -DRAG * sp * ball.vz * dt;
     ball.x += ball.vx * dt; ball.y += ball.vy * dt; ball.z += ball.vz * dt;
 
     // Backboard: a plane at z = BOARD.z facing the player.
@@ -110,7 +143,10 @@ export function previewPath(v, steps = 26, dt = 0.06) {
   const p = { ...START }, out = [];
   let { vx, vy, vz } = v;
   for (let i = 0; i < steps; i++) {
-    vy -= G * dt;
+    const sp = Math.hypot(vx, vy, vz);
+    vx += -DRAG * sp * vx * dt;
+    vy += (-G - DRAG * sp * vy) * dt;
+    vz += -DRAG * sp * vz * dt;
     p.x += vx * dt; p.y += vy * dt; p.z += vz * dt;
     if (p.y < BALL_R * 0.5 || p.z > BOARD.z) break;
     out.push({ ...p });
@@ -138,5 +174,6 @@ if (typeof process !== "undefined" && process.argv[1] && /hoopsPhysics\.js$/.tes
   const side = aimVelocity(60, 120, SWEET);
   console.assert(side.vx < 0, "pulling right should send the ball left");
   console.assert(previewPath(aimVelocity(0, SWEET, SWEET)).length > 10, "the aim guide should return a path");
-  console.log("hoops physics ok", { swishSpeed: +SWISH_SPEED.toFixed(2), swishAngleDeg: +((SWISH_ANGLE * 180) / Math.PI).toFixed(1) });
+  console.assert(Math.abs(heightAtHoop(SWISH_SPEED) - HOOP.y) < 0.02, "the solved swish speed passes through the ring centre");
+  console.log("hoops physics ok", { swishSpeed: +SWISH_SPEED.toFixed(2), swishAngleDeg: +((SWISH_ANGLE * 180) / Math.PI).toFixed(1), drag: DRAG });
 }

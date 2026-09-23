@@ -55,7 +55,6 @@ export default function Home() {
           >
             I work on <span className="hl">data governance</span>, AI risk and information security.
           </motion.h1>
-          <Reveal as="p" className="hero-body" delay={0.1}>{profile.intro}</Reveal>
           <Stagger className="profiles" gap={0.06}>
             <StaggerItem as="span"><Link className="pill" to="/playground">View projects</Link></StaggerItem>
             <StaggerItem as="span"><a className="pill" href={profile.github} target="_blank" rel="noopener">GitHub</a></StaggerItem>

@@ -14,9 +14,11 @@
   --card: #fffdfb;
   --accent: #1d4ed8;
   --accent-2: var(--accent);
-  --font-body: "Satoshi", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Cabinet Grotesk", "Satoshi", system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Calibri throughout. Carlito is the metric compatible fallback for
+     visitors without it, then the platform sans. */
+  --font-body: Calibri, Carlito, Candara, "Segoe UI", system-ui, sans-serif;
+  --font-display: Calibri, Carlito, Candara, "Segoe UI", system-ui, sans-serif;
+  --font-mono: Calibri, Carlito, Candara, "Segoe UI", system-ui, sans-serif;
   --maxw: 44rem;
 }
 
@@ -197,6 +199,16 @@ a { color: inherit; text-decoration: none; }
 .hoops-score { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
 .hoops-score b { color: var(--ink); font-size: 0.9rem; }
 .hoops-canvas { display: block; width: 100%; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.hoops-learn { border-top: 1px solid var(--line); padding: 0.7rem 0.85rem 0.85rem; }
+.hoops-learn-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.hoops-sect { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.hoops-prog { font-family: var(--font-mono); font-size: 0.66rem; color: var(--faint); white-space: nowrap; }
+.hoops-learn h4 { margin: 0.35rem 0 0.25rem; font-size: 0.95rem; font-weight: 600; line-height: 1.3; }
+.hoops-learn p { margin: 0; color: var(--muted); font-size: 0.84rem; line-height: 1.5; }
+.hoops-learn-empty { min-height: 4.6em; }
+.hoops-next { margin-top: 0.45rem !important; color: var(--faint) !important; font-size: 0.74rem !important; }
+.hoops-pitch { margin-top: 0.5rem !important; font-size: 0.8rem !important; color: var(--ink) !important; }
+.hoops-pitch a { color: var(--accent); border-bottom: 1px solid var(--accent); }
 .hoops-canvas:active { cursor: grabbing; }
 @media (max-width: 900px) {
   .page-wide { max-width: var(--maxw); }
