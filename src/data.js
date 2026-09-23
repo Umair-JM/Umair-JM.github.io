@@ -12,7 +12,7 @@ export const profile = {
   github: "https://github.com/Umair-JM",
   linkedin: "https://linkedin.com/in/umairjm",
   intro:
-    "My path started with networks. I configured and hardened the kit that keeps traffic moving, then moved into security research and teaching, and built a SOC home lab. From August 2026 I am a Data & AI Governance Analyst at the Centre for Chiropractic Research in Auckland, working on research data governance, AI risk and information security. I am open to GRC, security analyst and AI governance roles in Auckland.",
+    "My path started with networks. I configured and hardened the kit that keeps traffic moving, then moved into security research and teaching, and built a SOC home lab. I am now the Data & AI Governance Analyst at the Centre for Chiropractic Research in Auckland, where I look after research data governance, AI risk and information security. I am open to GRC, security analyst and AI governance roles in Auckland.",
 };
 
 export const focus = [
@@ -37,9 +37,9 @@ export const experience = [
   {
     role: "Data & AI Governance Analyst",
     org: "Centre for Chiropractic Research, New Zealand College of Chiropractic",
-    date: "2026 to 2027",
+    date: "Aug 2026 to present",
     blurb:
-      "Starting August 2026: research data governance and privacy under the Privacy Act 2020, AI model and pipeline risk against the OWASP LLM Top 10 and NIST AI RMF, and an ISO/IEC 27001 aligned information risk register.",
+      "Research data governance and privacy under the Privacy Act 2020, AI model and pipeline risk against the OWASP LLM Top 10 and NIST AI RMF, and an ISO/IEC 27001 aligned information risk register.",
   },
   {
     role: "Program Manager",
