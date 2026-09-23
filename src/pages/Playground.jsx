@@ -2,8 +2,8 @@ import { projects } from "../data.js";
 import { Reveal, Stagger, StaggerItem, SpotlightCard } from "../lib/motion.jsx";
 import Footer from "../components/Footer.jsx";
 
-// Order the domain groups so security leads, networking follows, research closes.
-const ORDER = ["Security operations", "Networking", "Applied security research"];
+// Order the domain groups: research leads, networking follows.
+const ORDER = ["Applied security research"];
 
 function group(list) {
   const byDomain = {};

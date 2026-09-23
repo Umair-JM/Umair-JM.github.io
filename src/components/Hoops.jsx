@@ -404,7 +404,6 @@ export default function Hoops() {
   const card = unlocked > 0 ? CARDS[unlocked - 1] : null;
   const toNext = HOOPS_PER_CARD - (made % HOOPS_PER_CARD);
   const pitch = unlocked >= CARDS_BEFORE_PITCH;
-  const deckDone = unlocked >= CARDS.length;
 
   return (
     <div className="hoops-card" ref={wrapRef}>
@@ -426,7 +425,7 @@ export default function Hoops() {
             <p>{card.body}</p>
             {pitch ? (
               <p className="hoops-pitch">
-                {deckDone ? "That is the whole deck." : `That is ${unlocked} cards.`} For the rest of it,{" "}
+                For further information,{" "}
                 <a href={`mailto:${profile.email}?subject=AI%20security%20work`}>hire me</a>.
               </p>
             ) : (

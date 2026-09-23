@@ -34,9 +34,8 @@ function ProjectCard({ p }) {
 
 export default function Home() {
   const featured = projects.find((p) => p.featured);
-  // SOC projects stay up top: they are the hands-on evidence behind the
-  // governance + security positioning.
-  const topProjects = projects.filter((p) => p !== featured && p.domain === "Security operations").slice(0, 2);
+  // The next two real projects sit under the featured one.
+  const topProjects = projects.filter((p) => p !== featured).slice(0, 2);
 
   return (
     <div className="home-grid">

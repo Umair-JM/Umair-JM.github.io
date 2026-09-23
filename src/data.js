@@ -26,7 +26,6 @@ export const focus = [
 
 export const stack = {
   "Governance & risk": ["ISO/IEC 27001", "NIST AI RMF", "NIST CSF", "Privacy Act 2020", "OWASP LLM Top 10", "MITRE ATT&CK"],
-  "Security operations": ["Microsoft Sentinel", "Splunk", "KQL", "Microsoft Defender"],
   Networking: ["TCP/IP", "Routing & Switching", "VLANs", "Subnetting", "Firewalls", "IDS / IPS", "ACLs", "Cisco IOS"],
   Tooling: ["Python", "PowerShell", "Bash", "Nmap", "Wireshark", "Burp Suite", "Nessus"],
 };
@@ -74,59 +73,23 @@ export const experience = [
 // Real work, framed by outcome. `featured` surfaces the lead project.
 export const projects = [
   {
-    title: "Detection engineering home lab",
-    domain: "Security operations",
-    cert: "SOC",
-    featured: true,
-    outcome: "End to end SOC workflow, from raw logs to triaged, ATT&CK mapped incidents",
-    blurb:
-      "Stood up a Microsoft Sentinel workspace, ingested sign in, identity and endpoint logs, and wrote analytics rules mapped to MITRE ATT&CK.",
-    tags: ["Microsoft Sentinel", "KQL", "MITRE ATT&CK", "Microsoft Defender"],
-  },
-  {
-    title: "Threat hunting query pack",
-    domain: "Security operations",
-    cert: "SOC",
-    outcome: "Reusable KQL hunts that surface brute force and anomalous process activity",
-    blurb:
-      "Wrote KQL across sign in and device tables to hunt brute force attempts, impossible travel and unusual process execution.",
-    tags: ["KQL", "Threat hunting", "Microsoft Sentinel"],
-  },
-  {
-    title: "Incident investigation and IR runbook",
-    domain: "Security operations",
-    cert: "SOC",
-    outcome: "A repeatable triage path that shortens time to a decision",
-    blurb:
-      "Triaged incidents in Microsoft Defender, reconstructed alert timelines across identity and endpoint, and wrote a short incident response runbook.",
-    tags: ["Microsoft Defender", "Incident Response", "MITRE ATT&CK"],
-  },
-  {
     title: "Tamper evident voting system",
     domain: "Applied security research",
     cert: "Research",
+    featured: true,
     outcome: "End to end auditable system with cryptographic integrity checks",
     blurb:
-      "Built a verifiable voting system that pairs cryptographic integrity checks with computer vision, designed threat model first.",
+      "Built a verifiable voting system that pairs cryptographic integrity checks with computer vision, designed threat model first. COGNET Lab, NUST.",
     tags: ["Cryptography", "Threat modeling", "Computer vision", "Python"],
   },
   {
-    title: "Segmented enterprise network",
-    domain: "Networking",
-    cert: "Network",
-    outcome: "A defensible network design with isolation built in, not bolted on",
+    title: "Post quantum cryptography and adversarial ML",
+    domain: "Applied security research",
+    cert: "Research",
+    outcome: "Threat models and defences for deep learning under attack",
     blurb:
-      "Designed a segmented network with VLANs, 802.1Q trunking and inter VLAN routing, then hardened the access layer.",
-    tags: ["VLANs", "Inter VLAN routing", "Port security", "Cisco IOS"],
-  },
-  {
-    title: "OSPF routing with ACL filtering",
-    domain: "Networking",
-    cert: "Network",
-    outcome: "Dynamic routing plus least privilege traffic control between segments",
-    blurb:
-      "Configured OSPF across a multi segment topology, then applied access control lists to enforce least privilege traffic flow.",
-    tags: ["OSPF", "ACLs", "Routing & switching", "Packet Tracer"],
+      "Research on post quantum cryptography and on hardening deep learning models against adversarial examples. COGNET Lab, NUST.",
+    tags: ["Post quantum cryptography", "Adversarial ML", "Threat modeling"],
   },
 ];
 
