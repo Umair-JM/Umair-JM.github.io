@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { createGame, aimVelocity, aimFromFlick, previewPath, BALL_R, HOOP } from "../lib/hoopsPhysics.js";
 import { CARDS } from "../lib/aiSecurityCards.js";
 import { profile } from "../data.js";
@@ -43,14 +44,15 @@ function saveNum(key, n) {
 }
 
 function loadArt() {
-  const names = ["court.jpg", "hoop0.webp", "hoop1.webp", "hoop2.webp",
-                 "kids0.webp", "kids1.webp", "kids2.webp", "ball.webp"];
+  const names = ["court.jpg", "crowd0.webp", "crowd1.webp", "crowd2.webp",
+                 "front.webp", "hoop0.webp", "hoop1.webp", "hoop2.webp", "ball.webp"];
   return Promise.all(names.map((n) => new Promise((res) => {
     const img = new Image();
     img.onload = () => res(img);
     img.onerror = () => res(null);
     img.src = ART + n;
-  }))).then(([court, h0, h1, h2, k0, k1, k2, ball]) => ({ court, hoops: [h0, h1, h2], kids: [k0, k1, k2], ball }));
+  }))).then(([court, k0, k1, k2, front, h0, h1, h2, ball]) =>
+    ({ court, crowd: [k0, k1, k2], front, hoops: [h0, h1, h2], ball }));
 }
 
 export default function Hoops() {
@@ -106,8 +108,9 @@ export default function Hoops() {
       };
       scaled = {
         court: px(art.court),
+        crowd: art.crowd.map((k) => (k ? px(k) : null)),
+        front: art.front ? px(art.front) : null,
         hoops: art.hoops.map((h) => (h ? px(h) : null)),
-        kids: art.kids.map((k) => (k ? px(k) : null)),
       };
     };
 
@@ -135,6 +138,12 @@ export default function Hoops() {
       else { ctx.fillStyle = "#14161b"; ctx.fillRect(0, 0, W, H); }
     };
 
+    // The advertising board and the team benches stand between the crowd and
+    // the court, so they are drawn over the crowd and never move.
+    const drawFront = () => {
+      if (scaled?.front) blit(scaled.front);
+    };
+
     const drawHoop = () => {
       if (!scaled?.hoops[0]) return;
       // How deep the ball sits in the net picks the stretched sprite.
@@ -147,13 +156,13 @@ export default function Hoops() {
       blit(img, game.hoopX * K() * scaleAt(HOOP.z));
     };
 
-    // Kids along the baseline. They watch, and for a moment after a basket
-    // they jump and throw their arms up.
-    const drawKids = (now) => {
-      if (!scaled?.kids[0]) return;
-      const cheering = flash && now - flash < 1500;
-      const pose = cheering && !reduced ? 1 + (Math.floor((now - flash) / 140) % 2) : (cheering ? 2 : 0);
-      blit(scaled.kids[pose] || scaled.kids[0]);
+    // The crowd in the stands and on the benches. They watch, and for a
+    // moment after a basket they are up and cheering.
+    const drawCrowd = (now) => {
+      if (!scaled?.crowd[0]) return;
+      const cheering = flash && now - flash < 1800;
+      const pose = cheering && !reduced ? 1 + (Math.floor((now - flash) / 130) % 2) : (cheering ? 2 : 0);
+      blit(scaled.crowd[pose] || scaled.crowd[0]);
     };
 
     const drawBall = () => {
@@ -243,7 +252,8 @@ export default function Hoops() {
 
     const draw = (now) => {
       drawCourt();
-      drawKids(now);
+      drawCrowd(now);
+      drawFront();
       drawTrail();
       // Once the ball is at the ring the net hangs in front of it.
       const behindNet = ball.z > HOOP.z - HOOP.r && ball.y < HOOP.y + BALL_R * 1.5;
@@ -403,6 +413,21 @@ export default function Hoops() {
   const toNext = HOOPS_PER_CARD - (made % HOOPS_PER_CARD);
   const pitch = unlocked >= CARDS_BEFORE_PITCH;
 
+  // A freshly unlocked card pops out beside the panel, so it is read rather
+  // than quietly swapped into the block below the court.
+  const [pop, setPop] = useState(null);
+  const seenCards = useRef(unlocked);
+  useEffect(() => {
+    if (unlocked > seenCards.current && card) {
+      setPop({ ...card, n: unlocked });
+      const timer = setTimeout(() => setPop(null), 9000);
+      seenCards.current = unlocked;
+      return () => clearTimeout(timer);
+    }
+    seenCards.current = unlocked;
+    return undefined;
+  }, [unlocked, card]);
+
   return (
     <div className="hoops-card" ref={wrapRef}>
       <div className="hoops-head">
@@ -418,6 +443,27 @@ export default function Hoops() {
         role="application"
         aria-label="Basketball game. Flick the ball at the hoop, or use the arrow keys to aim and space to shoot."
       />
+      <AnimatePresence>
+        {pop && (
+          <motion.aside
+            className="hoops-pop"
+            key={pop.n}
+            initial={{ opacity: 0, x: 18, scale: 0.94 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 10, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 260, damping: 24 }}
+          >
+            <div className="hoops-learn-top">
+              <span className="hoops-sect">{pop.section}</span>
+              <span className="hoops-prog">{pop.tag} · {pop.n} of {CARDS.length}</span>
+            </div>
+            <h4>{pop.title}</h4>
+            <p>{pop.body}</p>
+            <button className="hoops-pop-x" onClick={() => setPop(null)} aria-label="Dismiss card">×</button>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
       <div className="hoops-learn" aria-live="polite">
         {card ? (
           <>
@@ -438,7 +484,7 @@ export default function Hoops() {
           </>
         ) : (
           <p className="hoops-learn-empty">
-            Make baskets to learn AI security. {CARDS.length} cards in order over {CARDS.length * HOOPS_PER_CARD} hoops.
+            Learn AI security by shooting hoops. {CARDS.length} cards, one every {HOOPS_PER_CARD} baskets.
           </p>
         )}
       </div>

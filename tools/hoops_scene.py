@@ -30,7 +30,14 @@ ASPECT = 1.4                # canvas height / width, fixed so one render fits al
 BALL_R = 0.3
 HOOP = dict(y=3.05, z=8.0, r=0.65)
 BOARD = dict(z=9.0, half_w=1.5, y0=2.6, y1=4.15)
-WALL_Z = 10.6
+WALL_Z = 15.6          # back wall, behind the stands
+BOARD_FRONT = 11.0     # advertising board along the baseline
+ROWS = [               # (depth, riser height) for the three tiers of seats
+    (11.75, 0.00),
+    (12.75, 0.42),
+    (13.75, 0.84),
+]
+SEAT_H = 0.45          # seat above its own riser
 BASELINE = 9.2
 FT_Z = 5.2
 THREE_R = 2.9
@@ -42,8 +49,13 @@ def g2b(x, y, z):
 
 
 # ------------------------------------------------------------------ utilities
+_MAT_CACHE = {}
+
+
 def clear():
     bpy.ops.wm.read_factory_settings(use_empty=True)
+    # The cached materials belong to the scene that was just thrown away.
+    _MAT_CACHE.clear()
 
 
 def mat(name, base, rough=0.6, metal=0.0, bump=None, emit=None):
@@ -168,14 +180,40 @@ def court():
     floor = put(bpy.context.object, g2b(0, 0, 4), material=wood)
     floor.name = "floor"
 
-    # Back wall of the gym, with a dark pad behind the hoop.
-    wall = mat("wall", (0.035, 0.040, 0.052), rough=0.9)
-    bpy.ops.mesh.primitive_plane_add(size=44)
-    put(bpy.context.object, g2b(0, 7, WALL_Z), rot=(math.pi / 2, 0, 0), material=wall)
-    pad = mat("pad", (0.045, 0.055, 0.085), rough=0.95)
-    padw = cube()
-    padw.scale = (2.6, 0.05, 0.62)
-    put(padw, g2b(0, 0.75, WALL_Z - 0.12), material=pad)
+    # Back wall of the arena, dark so the court and the crowd read against it.
+    wall = mat("wall", (0.030, 0.034, 0.045), rough=0.9)
+    bpy.ops.mesh.primitive_plane_add(size=60)
+    put(bpy.context.object, g2b(0, 8, WALL_Z), rot=(math.pi / 2, 0, 0), material=wall)
+
+    concrete = mat("concrete", (0.032, 0.035, 0.042), rough=0.95)
+    seatmat = mat("seat", (0.045, 0.055, 0.105), rough=0.7)
+
+    # Three tiers of seating behind the baseline: a riser, then a row of seats.
+    for depth, lift in ROWS:
+        riser = cube()
+        riser.scale = (6.2, 0.45, (lift + 0.24) / 2 if lift else 0.12)
+        put(riser, g2b(0, (lift + 0.24) / 2 if lift else 0.12, depth), material=concrete)
+        bench = cube()
+        bench.scale = (6.0, 0.30, 0.05)
+        put(bench, g2b(0, lift + SEAT_H, depth - 0.06), material=seatmat)
+        backrest = cube()
+        backrest.scale = (6.0, 0.03, 0.17)
+        put(backrest, g2b(0, lift + SEAT_H + 0.20, depth + 0.24), material=seatmat)
+
+    # Championship banners high on the back wall, clear of the backboard.
+    # The banner trim moved out with the courtside layer, so it is local now.
+    stripe = mat("bannertrim", (0.86, 0.88, 0.92), rough=0.35, emit=(0.30, 0.31, 0.34))
+    bannerA = mat("bannerA", (0.30, 0.06, 0.09), rough=0.85, emit=(0.30, 0.07, 0.09))
+    bannerB = mat("bannerB", (0.07, 0.11, 0.32), rough=0.85, emit=(0.07, 0.12, 0.34))
+    for i, bx in enumerate((-3.4, -2.35, 2.35, 3.4)):
+        b = cube()
+        b.scale = (0.40, 0.68, 0.02)
+        put(b, g2b(bx, 4.70, WALL_Z - 0.25), material=bannerA if i % 2 else bannerB)
+        trim = cube()
+        trim.scale = (0.40, 0.05, 0.015)
+        put(trim, g2b(bx, 4.15, WALL_Z - 0.28), material=stripe)
+        rod = cylinder(0.02, 0.8, verts=10)
+        put(rod, g2b(bx, 5.33, WALL_Z - 0.25), rot=(0, math.pi / 2, 0), material=stripe)
 
     paint = mat("paint", (0.95, 0.95, 0.93), rough=0.3)
     key_paint = mat("key", (0.13, 0.22, 0.45), rough=0.35)
@@ -285,68 +323,207 @@ def hoop_assembly(net_state=0.0):
         ring2 = smooth(torus(r, 0.007, segs=64, rings=8))
         put(ring2, g2b(0, HOOP["y"] - depth, HOOP["z"]), material=cord)
 
-    # Two arms carrying the board back to the wall, so nothing crosses the shot.
+    # The stanchion: a padded base behind the baseline carrying the backboard.
+    STANCH_Z = 10.95
+    padding = mat("stanchpad", (0.10, 0.11, 0.145), rough=0.9)
+    padstripe = mat("stanchstripe", (0.10, 0.24, 0.52), rough=0.5, emit=(0.05, 0.12, 0.28))
+    steel2 = mat("stanchsteel", (0.13, 0.14, 0.17), rough=0.45, metal=0.6)
+    base = cube()
+    base.scale = (0.70, 0.42, 0.50)
+    put(base, g2b(0, 0.42, STANCH_Z), material=padding)
+    band = cube()
+    band.scale = (0.705, 0.07, 0.505)
+    put(band, g2b(0, 0.56, STANCH_Z), material=padstripe)
+    column = cube()
+    column.scale = (0.13, 1.55, 0.13)
+    put(column, g2b(0, 2.38, STANCH_Z), material=steel2)
+    boom = cube()
+    boom.scale = (0.11, 0.115, (STANCH_Z - BOARD["z"]) / 2 + 0.08)
+    put(boom, g2b(0, 3.95, (BOARD["z"] + STANCH_Z) / 2), material=steel2)
     for side in (-1, 1):
-        arm = cube()
-        length = (WALL_Z - BOARD["z"]) / 2
-        arm.scale = (0.05, length, 0.05)
-        put(arm, g2b(side * (BOARD["half_w"] - 0.25), cy + 0.35, (BOARD["z"] + WALL_Z) / 2), material=dark)
+        stay = cube()
+        stay.scale = (0.045, 0.045, 0.66)
+        put(stay, g2b(side * 0.40, 3.28, 9.85), rot=(math.radians(32), 0, 0), material=steel2)
 
 
+# The stands are two stops down on the court, as they are in an arena.
+STAND_DIM = 0.85
+BENCH_DIM = 0.72
+SKINS = [(0.42, 0.27, 0.18), (0.62, 0.44, 0.31), (0.30, 0.18, 0.11),
+         (0.76, 0.58, 0.44), (0.22, 0.13, 0.08), (0.52, 0.35, 0.23)]
+SHIRTS = [(0.55, 0.09, 0.11), (0.08, 0.16, 0.45), (0.85, 0.72, 0.18),
+          (0.10, 0.36, 0.22), (0.72, 0.72, 0.76), (0.34, 0.10, 0.42),
+          (0.90, 0.42, 0.08), (0.06, 0.08, 0.12)]
+LEGWEAR = [(0.10, 0.12, 0.18), (0.16, 0.16, 0.19), (0.07, 0.09, 0.14), (0.30, 0.30, 0.34)]
+HAIRS = [(0.04, 0.03, 0.03), (0.16, 0.10, 0.05), (0.32, 0.24, 0.12), (0.05, 0.05, 0.06)]
 
 
-def kid(h, pose, seed=0):
-    """A child in silhouette. Pose 0 watches, 1 and 2 cheer with the arms up."""
+def flat(rgb, rough=0.75, dim=1.0):
+    """One material per colour, so a crowd does not create hundreds."""
+    rgb = tuple(c * dim for c in rgb)
+    key = (round(rgb[0], 3), round(rgb[1], 3), round(rgb[2], 3), rough)
+    if key not in _MAT_CACHE:
+        _MAT_CACHE[key] = mat(f"c{len(_MAT_CACHE)}", rgb, rough=rough)
+    return _MAT_CACHE[key]
+
+
+def limb(p0, p1, r, material, parts):
+    """A capsule from p0 to p1, both in game coordinates."""
+    a, b = g2b(*p0), g2b(*p1)
+    d = b - a
+    length = d.length
+    if length < 1e-4:
+        return
+    o = smooth(cylinder(r, length, verts=12))
+    o.location = (a + b) / 2
+    o.rotation_mode = "QUATERNION"
+    o.rotation_quaternion = Vector((0, 0, 1)).rotation_difference(d)
+    o.data.materials.append(material)
+    parts.append(o)
+
+
+def blob(at, r, material, parts, squash=1.0):
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=r, segments=14, ring_count=8)
+    o = smooth(bpy.context.object)
+    o.location = g2b(*at)
+    o.scale = (1, 1, squash)
+    o.data.materials.append(material)
+    parts.append(o)
+
+
+def person(x, z, h, pose, seed, base_y=0.0, dim=1.0):
+    """A spectator. Pose is sit, stand or cheer; cheer throws the arms up.
+
+    Built from capsules between named joints, so the limbs bend at the elbow
+    and the knee instead of being one stiff stick.
+    """
     import random
     rng = random.Random(seed)
-    # Light enough to read as a figure against a nearly black wall, flat
-    # enough to stay a silhouette.
-    dark = mat(f"kid{seed}", (0.16, 0.17, 0.20), rough=0.6)
+    skin = flat(SKINS[rng.randrange(len(SKINS))], 0.62, dim)
+    shirt = flat(SHIRTS[rng.randrange(len(SHIRTS))], 0.75, dim)
+    legs = flat(LEGWEAR[rng.randrange(len(LEGWEAR))], 0.75, dim)
+    hair = flat(HAIRS[rng.randrange(len(HAIRS))], 0.85, dim)
     parts = []
+    turn = rng.uniform(-0.12, 0.12)          # a little sideways lean
+    zz = z + rng.uniform(-0.05, 0.05)
 
-    def bone(r, length, cx, cy, tilt=0.0):
-        """A limb of this length whose middle sits at (cx, cy), tilted in the
-        picture plane. Tilt turns about the depth axis, which is Blender Y."""
-        o = smooth(cylinder(r, length, verts=14))
-        put(o, g2b(cx, cy, 0), rot=(0, tilt, 0), material=dark)
-        parts.append(o)
+    def P(dx, dy, dz=0.0):
+        return (x + dx + turn * dy * 0.2, base_y + dy, zz + dz)
 
-    lean = math.radians(rng.uniform(-4, 4))
+    seated = pose == "sit"
+    hip_y = SEAT_H if seated else h * 0.50
+    shoulder_y = hip_y + h * (0.30 if seated else 0.32)
+    head_y = shoulder_y + h * 0.13
+    half_sh = h * 0.115
+
     # legs
     for side in (-1, 1):
-        bone(h * 0.048, h * 0.46, side * h * 0.065, h * 0.23)
-    # torso and head
-    bone(h * 0.105, h * 0.34, 0, h * 0.60, lean)
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=h * 0.105, segments=20, ring_count=10)
-    head = smooth(bpy.context.object)
-    put(head, g2b(0, h * 0.87, 0), material=dark)
-    parts.append(head)
+        hip = P(side * h * 0.055, hip_y)
+        if seated:
+            knee = P(side * h * 0.075, hip_y - 0.02, -h * 0.25)
+            ankle = P(side * h * 0.075, base_y + 0.02 - hip_y + hip_y - h * 0.26, -h * 0.22)
+            ankle = (knee[0], base_y + 0.05, knee[2] - h * 0.02)
+        else:
+            knee = P(side * h * 0.06, hip_y - h * 0.24)
+            ankle = P(side * h * 0.06, base_y + 0.04)
+        limb(hip, knee, h * 0.052, legs, parts)
+        limb(knee, ankle, h * 0.042, legs, parts)
 
-    # arms, hung down when watching and thrown up when cheering
-    arm_l = h * 0.36
+    # torso, shoulders, head
+    hips_mid, sh_mid = P(0, hip_y), P(0, shoulder_y)
+    limb(hips_mid, sh_mid, h * 0.105, shirt, parts)
+    limb(P(-half_sh, shoulder_y), P(half_sh, shoulder_y), h * 0.062, shirt, parts)
+    limb(P(0, shoulder_y), P(0, head_y - h * 0.045), h * 0.035, skin, parts)
+    blob(P(0, head_y), h * 0.072, skin, parts, squash=1.12)
+    blob((P(0, head_y + h * 0.02)[0], P(0, head_y + h * 0.02)[1], zz + h * 0.012),
+         h * 0.074, hair, parts, squash=0.78)
+
+    # arms: down when watching, up when cheering
     for side in (-1, 1):
-        sx, sy = side * h * 0.10, h * 0.74
-        ang = math.radians(12 if pose == 0 else (34 if pose == 1 else 22)) * side
-        up = -1 if pose == 0 else 1
-        cx = sx + math.sin(ang) * arm_l * 0.5 * (1 if up > 0 else -1)
-        cy = sy + up * math.cos(ang) * arm_l * 0.5
-        bone(h * 0.040, arm_l, cx, cy, ang * (1 if up > 0 else -1))
+        sh = P(side * half_sh, shoulder_y)
+        if pose == "cheer":
+            elbow = P(side * (half_sh + h * 0.07), shoulder_y + h * 0.14)
+            hand = P(side * (half_sh + h * 0.10 + rng.uniform(0, 0.04)),
+                     shoulder_y + h * (0.30 + rng.uniform(0, 0.05)))
+        elif seated:
+            elbow = P(side * (half_sh + h * 0.02), shoulder_y - h * 0.15)
+            hand = P(side * (half_sh + h * 0.01), shoulder_y - h * 0.22, -h * 0.12)
+        else:
+            elbow = P(side * (half_sh + h * 0.015), shoulder_y - h * 0.16)
+            hand = P(side * (half_sh + h * 0.03), shoulder_y - h * 0.30)
+        limb(sh, elbow, h * 0.040, skin if pose == "cheer" else shirt, parts)
+        limb(elbow, hand, h * 0.034, skin, parts)
+
     return parts
 
 
 def crowd(pose):
-    """Kids along the baseline behind the hoop, where there is room in frame."""
-    stand = [
-        (-2.35, 9.7, 1.24, 11), (-1.55, 10.05, 1.12, 22), (-0.85, 9.6, 1.32, 33),
-        (0.95, 9.75, 1.18, 44), (1.7, 10.1, 1.28, 55), (2.45, 9.65, 1.08, 66),
-    ]
-    for i, (x, z, h, seed) in enumerate(stand):
-        hop = 0.0
-        if pose:
-            # They do not all leave the floor at the same instant.
-            hop = (0.16 if (i + pose) % 2 else 0.06) * (1.0 if pose == 2 else 0.55)
-        for o in kid(h, pose, seed):
-            o.location = o.location + Vector((x, z, hop))
+    """The public in the stands, plus the two team benches courtside.
+
+    Pose 0 is watching. Poses 1 and 2 are the crowd up and cheering, with the
+    figures out of step so the swap between them reads as movement.
+    """
+    import random
+    rng = random.Random(7)
+    cheering = pose > 0
+
+    for row, (depth, lift) in enumerate(ROWS):
+        n = 13 + row
+        for i in range(n):
+            x = -3.45 + (6.9 * i) / (n - 1) + rng.uniform(-0.06, 0.06)
+            seed = row * 100 + i
+            h = rng.uniform(1.52, 1.86) if rng.random() > 0.22 else rng.uniform(1.15, 1.35)
+            if cheering:
+                # Not everyone is on their feet at the same instant.
+                up = (i + row + pose) % 3 != 0
+                hop = 0.0
+                if up:
+                    hop = (0.07 if (i + pose) % 2 else 0.02) * (1.3 if pose == 2 else 0.7)
+                person(x, depth, h, "cheer" if up else "stand", seed, base_y=lift + hop, dim=STAND_DIM)
+            else:
+                person(x, depth, h, "sit", seed, base_y=lift, dim=STAND_DIM)
+
+    # Bench players: taller, seated, in team colours, standing when it goes in.
+    for side in (-1, 1):
+        for k in range(3):
+            x = side * 2.75 + (k - 1) * 0.78
+            seed = 900 + side * 10 + k
+            h = rng.uniform(1.80, 1.96)
+            if cheering and (k + pose) % 2 == 0:
+                person(x, 10.1, h, "cheer", seed, base_y=0.06, dim=BENCH_DIM)
+            else:
+                person(x, 10.15, h, "sit", seed, base_y=0.0, dim=BENCH_DIM)
+
+
+
+def courtside():
+    """Things that stand between the crowd and the court: the advertising
+    board along the baseline and the two team benches. They never move, so
+    they are their own still layer drawn over the crowd."""
+    bench_mat = mat("teambench", (0.09, 0.10, 0.13), rough=0.6)
+    stripe = mat("adstripe", (0.86, 0.88, 0.92), rough=0.35)
+    adtrim = mat("adtrim", (0.5, 0.52, 0.56), rough=0.4, emit=(0.5, 0.52, 0.58))
+    board_face = mat("adboard", (0.06, 0.13, 0.30), rough=0.35, emit=(0.09, 0.22, 0.55))
+
+    # Team benches at courtside, either side of the basket.
+    for side in (-1, 1):
+        seat = cube()
+        seat.scale = (0.95, 0.04, 0.24)
+        put(seat, g2b(side * 2.75, 0.45, 10.1), material=bench_mat)
+        for dx in (-0.8, 0.0, 0.8):
+            leg = cube()
+            leg.scale = (0.04, 0.225, 0.04)
+            put(leg, g2b(side * 2.75 + dx, 0.225, 10.1), material=bench_mat)
+
+    # The advertising board along the baseline, in front of the first row.
+    ad = cube()
+    ad.scale = (6.0, 0.52, 0.06)
+    put(ad, g2b(0, 0.52, BOARD_FRONT), material=board_face)
+    for py, hy in ((0.86, 0.035), (0.20, 0.02)):
+        s = cube()
+        s.scale = (5.98, hy, 0.01)
+        put(s, g2b(0, py, BOARD_FRONT - 0.07), material=adtrim)
+
 
 
 def ball_object():
@@ -472,6 +649,16 @@ def job_court(out, width):
     render_to(out / "court.png")
 
 
+def job_front(out, width):
+    """The still courtside layer, drawn over the crowd."""
+    clear()
+    add_camera(width)
+    lighting()
+    courtside()
+    render_setup(width, transparent=True, samples=96)
+    render_to(out / "front.png")
+
+
 def job_hoop(out, width):
     for i, state in enumerate((0.0, 0.5, 1.0)):
         clear()
@@ -545,17 +732,26 @@ def job_kids(out, width):
         clear()
         add_camera(width)
         lighting()
-        # A low light between the kids and the wall puts an edge on them.
+        # House lights over the stands: enough to read faces and colours,
+        # well under the court, the way an arena is lit.
+        house = bpy.data.lights.new("house", "AREA")
+        house.energy = 900
+        house.size = 10
+        ho = bpy.data.objects.new("house", house)
+        ho.location = g2b(0, 7.5, 12.6)
+        ho.rotation_euler = (math.radians(38), 0, 0)
+        bpy.context.collection.objects.link(ho)
+        # And a low one behind them to put an edge on the silhouettes.
         rim = bpy.data.lights.new("crowdrim", "AREA")
-        rim.energy = 120
+        rim.energy = 160
         rim.size = 7
         ro = bpy.data.objects.new("crowdrim", rim)
-        ro.location = g2b(0, 2.2, 10.45)
+        ro.location = g2b(0, 2.6, 15.0)
         ro.rotation_euler = (math.radians(-100), 0, 0)
         bpy.context.collection.objects.link(ro)
         crowd(pose)
         render_setup(width, transparent=True, samples=64)
-        render_to(out / f"kids{pose}.png")
+        render_to(out / f"crowd{pose}.png")
 
 
 def main():
@@ -574,6 +770,8 @@ def main():
         job_calibrate(out, a.width)
     if a.job in ("court", "all"):
         job_court(out, a.width)
+    if a.job in ("front", "all"):
+        job_front(out, a.width)
     if a.job in ("hoop", "all"):
         job_hoop(out, a.width)
     if a.job in ("kids", "all"):
