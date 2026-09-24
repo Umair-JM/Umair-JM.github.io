@@ -38,6 +38,12 @@ export const CARDS = [
     title: "Unbounded consumption is a finding",
     body: "Token cost, context length and tool loops are denial of service and denial of wallet paths. Cap them per request and per user, not just globally.",
   },
+  {
+    section: "Threat modelling",
+    tag: "LLM06",
+    title: "An agent multiplies the surface",
+    body: "Every tool an agent can call is one more way in and one more way out. Enumerate the tools and their scopes, not only the prompts.",
+  },
 
   // Prompt injection and jailbreaking: attack the assistant, bypass guardrails.
   {
@@ -70,6 +76,18 @@ export const CARDS = [
     title: "Watch what the answer carries out",
     body: "Exfiltration often rides in a rendered image URL, a markdown link or a tool argument. Check outbound content, not only the text shown to the user.",
   },
+  {
+    section: "Prompt injection",
+    tag: "LLM01",
+    title: "Jailbreaks come in families",
+    body: "Roleplay, encoding, translation, long context, many shot. Test the family, because a filter tuned to one phrasing misses the next one.",
+  },
+  {
+    section: "Prompt injection",
+    tag: "LLM01",
+    title: "The attack can take ten turns",
+    body: "Context accumulates. A refusal in the first turn is often undone by patient setup, so test conversations, not single messages.",
+  },
 
   // AI supply chain: triage model artefacts for tampering.
   {
@@ -95,6 +113,18 @@ export const CARDS = [
     tag: "LLM03",
     title: "Adapters and plugins inherit the trust",
     body: "A LoRA adapter, a tokenizer, a custom loading script and an MCP server all run inside your trust boundary. Review them the way you review a dependency.",
+  },
+  {
+    section: "Supply chain",
+    tag: "LLM04",
+    title: "A fine tune inherits its parent",
+    body: "Whatever is hidden in a base model survives fine tuning and gets harder to see. Provenance has to cover the base, not only your run.",
+  },
+  {
+    section: "Supply chain",
+    tag: "LLM03",
+    title: "Sign what you ship",
+    body: "Internal model artefacts deserve the same signatures and attestations as builds. Without them, rollback and incident response are guesswork.",
   },
 
   // Data poisoning: craft and defend against RAG attacks.
@@ -128,6 +158,12 @@ export const CARDS = [
     title: "Grounding is not proof",
     body: "A retrieved citation can be real and still not support the sentence it sits beside. Check that the claim matches the source, not just that a source exists.",
   },
+  {
+    section: "Data poisoning",
+    tag: "LLM08",
+    title: "Embeddings are not anonymous",
+    body: "Vectors can be inverted back to something close to the source text. Treat the index as the sensitive store the documents were.",
+  },
 ];
 
 export const SECTIONS = [...new Set(CARDS.map((c) => c.section))];
@@ -141,5 +177,6 @@ if (typeof process !== "undefined" && process.argv[1] && /aiSecurityCards\.js$/.
     CARDS.filter((c) => c.body.length > 190).map((c) => [c.title, c.body.length]));
   console.assert(new Set(CARDS.map((c) => c.title)).size === CARDS.length, "titles are unique");
   console.assert(SECTIONS.length === 4, "four AI1 sections", SECTIONS);
+  console.assert(CARDS.length === 25, "25 cards, one per two hoops over fifty hoops", CARDS.length);
   console.log("cards ok", CARDS.length, SECTIONS);
 }

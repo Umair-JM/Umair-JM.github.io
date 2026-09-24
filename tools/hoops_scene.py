@@ -172,7 +172,7 @@ def court():
     wall = mat("wall", (0.035, 0.040, 0.052), rough=0.9)
     bpy.ops.mesh.primitive_plane_add(size=44)
     put(bpy.context.object, g2b(0, 7, WALL_Z), rot=(math.pi / 2, 0, 0), material=wall)
-    pad = mat("pad", (0.05, 0.06, 0.09), rough=0.95)
+    pad = mat("pad", (0.045, 0.055, 0.085), rough=0.95)
     padw = cube()
     padw.scale = (2.6, 0.05, 0.62)
     put(padw, g2b(0, 0.75, WALL_Z - 0.12), material=pad)
@@ -292,6 +292,61 @@ def hoop_assembly(net_state=0.0):
         arm.scale = (0.05, length, 0.05)
         put(arm, g2b(side * (BOARD["half_w"] - 0.25), cy + 0.35, (BOARD["z"] + WALL_Z) / 2), material=dark)
 
+
+
+
+def kid(h, pose, seed=0):
+    """A child in silhouette. Pose 0 watches, 1 and 2 cheer with the arms up."""
+    import random
+    rng = random.Random(seed)
+    # Light enough to read as a figure against a nearly black wall, flat
+    # enough to stay a silhouette.
+    dark = mat(f"kid{seed}", (0.16, 0.17, 0.20), rough=0.6)
+    parts = []
+
+    def bone(r, length, cx, cy, tilt=0.0):
+        """A limb of this length whose middle sits at (cx, cy), tilted in the
+        picture plane. Tilt turns about the depth axis, which is Blender Y."""
+        o = smooth(cylinder(r, length, verts=14))
+        put(o, g2b(cx, cy, 0), rot=(0, tilt, 0), material=dark)
+        parts.append(o)
+
+    lean = math.radians(rng.uniform(-4, 4))
+    # legs
+    for side in (-1, 1):
+        bone(h * 0.048, h * 0.46, side * h * 0.065, h * 0.23)
+    # torso and head
+    bone(h * 0.105, h * 0.34, 0, h * 0.60, lean)
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=h * 0.105, segments=20, ring_count=10)
+    head = smooth(bpy.context.object)
+    put(head, g2b(0, h * 0.87, 0), material=dark)
+    parts.append(head)
+
+    # arms, hung down when watching and thrown up when cheering
+    arm_l = h * 0.36
+    for side in (-1, 1):
+        sx, sy = side * h * 0.10, h * 0.74
+        ang = math.radians(12 if pose == 0 else (34 if pose == 1 else 22)) * side
+        up = -1 if pose == 0 else 1
+        cx = sx + math.sin(ang) * arm_l * 0.5 * (1 if up > 0 else -1)
+        cy = sy + up * math.cos(ang) * arm_l * 0.5
+        bone(h * 0.040, arm_l, cx, cy, ang * (1 if up > 0 else -1))
+    return parts
+
+
+def crowd(pose):
+    """Kids along the baseline behind the hoop, where there is room in frame."""
+    stand = [
+        (-2.35, 9.7, 1.24, 11), (-1.55, 10.05, 1.12, 22), (-0.85, 9.6, 1.32, 33),
+        (0.95, 9.75, 1.18, 44), (1.7, 10.1, 1.28, 55), (2.45, 9.65, 1.08, 66),
+    ]
+    for i, (x, z, h, seed) in enumerate(stand):
+        hop = 0.0
+        if pose:
+            # They do not all leave the floor at the same instant.
+            hop = (0.16 if (i + pose) % 2 else 0.06) * (1.0 if pose == 2 else 0.55)
+        for o in kid(h, pose, seed):
+            o.location = o.location + Vector((x, z, hop))
 
 
 def ball_object():
@@ -483,6 +538,26 @@ def job_ball(out, frames, size):
         render_to(out / f"ball_{f:02d}.png")
 
 
+
+def job_kids(out, width):
+    """Three crowd layers: watching, cheering, cheering harder."""
+    for pose in (0, 1, 2):
+        clear()
+        add_camera(width)
+        lighting()
+        # A low light between the kids and the wall puts an edge on them.
+        rim = bpy.data.lights.new("crowdrim", "AREA")
+        rim.energy = 120
+        rim.size = 7
+        ro = bpy.data.objects.new("crowdrim", rim)
+        ro.location = g2b(0, 2.2, 10.45)
+        ro.rotation_euler = (math.radians(-100), 0, 0)
+        bpy.context.collection.objects.link(ro)
+        crowd(pose)
+        render_setup(width, transparent=True, samples=64)
+        render_to(out / f"kids{pose}.png")
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     ap = argparse.ArgumentParser()
@@ -501,6 +576,8 @@ def main():
         job_court(out, a.width)
     if a.job in ("hoop", "all"):
         job_hoop(out, a.width)
+    if a.job in ("kids", "all"):
+        job_kids(out, a.width)
     if a.job in ("ball", "all"):
         job_ball(out, a.ball_frames, a.ball_size)
 

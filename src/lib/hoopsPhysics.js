@@ -85,6 +85,17 @@ export function aimVelocity(dx, dy, sweet) {
   return { vx: vz * (-dx / len) * SIDE_MAX, vy: speed * Math.sin(angle), vz };
 }
 
+/* A flick, in screen pixels, from where the hand went down to where it is
+   now. The launch is the reverse of that movement, which is the same shape
+   as a pull, so this hands the reversed vector to aimVelocity. Returns null
+   until the flick is clearly upward. */
+export function aimFromFlick(fromX, fromY, toX, toY, sweet, cap = Infinity) {
+  let dx = fromX - toX, dy = fromY - toY;     // reversed: a flick up is a pull down
+  const len = Math.hypot(dx, dy);
+  if (len > cap) { dx *= cap / len; dy *= cap / len; }
+  return dy > 8 ? aimVelocity(dx, dy, sweet) : null;
+}
+
 export function createGame() {
   const ball = { ...START, vx: 0, vy: 0, vz: 0 };
   const fresh = { mode: "idle", bounces: 0, t: 0, scored: false, rimHits: 0, boardHits: 0, pass: null, result: null };
@@ -222,6 +233,14 @@ if (typeof process !== "undefined" && process.argv[1] && /hoopsPhysics\.js$/.tes
   const side = aimVelocity(60, 120, SWEET);
   console.assert(side.vx < 0, "pulling right should send the ball left");
   console.assert(previewPath(aimVelocity(0, SWEET, SWEET)).length > 10, "the aim guide should return a path");
+  // A flick straight up the sweet length must be the same shot as the sweet
+  // pull. Getting this sign wrong flattens every shot, so it is checked.
+  const flick = aimFromFlick(100, 400, 100, 400 - SWEET, SWEET);
+  const pull = aimVelocity(0, SWEET, SWEET);
+  console.assert(flick && Math.abs(flick.vy - pull.vy) < 1e-9 && Math.abs(flick.vz - pull.vz) < 1e-9,
+    "a flick straight up matches the sweet pull", flick, pull);
+  console.assert(!aimFromFlick(100, 400, 100, 420, SWEET), "a downward flick is not a shot");
+  console.assert(aimFromFlick(100, 400, 130, 400 - SWEET, SWEET).vx > 0, "flicking right sends the ball right");
   console.assert(perfect.result === "swish", "a clean make reads as a swish", perfect.result);
   console.assert(shoot(0, SWEET * 0.6).result === "short", "a weak pull reads as short");
   console.assert(shoot(0, SWEET * 1.8).result === "long", "a hard pull reads as long", shoot(0, SWEET * 1.8).result);

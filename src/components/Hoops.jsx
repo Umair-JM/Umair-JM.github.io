@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createGame, aimVelocity, previewPath, BALL_R, HOOP } from "../lib/hoopsPhysics.js";
+import { createGame, aimVelocity, aimFromFlick, previewPath, BALL_R, HOOP } from "../lib/hoopsPhysics.js";
 import { CARDS } from "../lib/aiSecurityCards.js";
 import { profile } from "../data.js";
 
@@ -43,13 +43,14 @@ function saveNum(key, n) {
 }
 
 function loadArt() {
-  const names = ["court.jpg", "hoop0.webp", "hoop1.webp", "hoop2.webp", "ball.webp"];
+  const names = ["court.jpg", "hoop0.webp", "hoop1.webp", "hoop2.webp",
+                 "kids0.webp", "kids1.webp", "kids2.webp", "ball.webp"];
   return Promise.all(names.map((n) => new Promise((res) => {
     const img = new Image();
     img.onload = () => res(img);
     img.onerror = () => res(null);
     img.src = ART + n;
-  }))).then(([court, h0, h1, h2, ball]) => ({ court, hoops: [h0, h1, h2], ball }));
+  }))).then(([court, h0, h1, h2, k0, k1, k2, ball]) => ({ court, hoops: [h0, h1, h2], kids: [k0, k1, k2], ball }));
 }
 
 export default function Hoops() {
@@ -103,7 +104,11 @@ export default function Hoops() {
         cc.drawImage(img, 0, 0, c.width, c.height);
         return c;
       };
-      scaled = { court: px(art.court), hoops: art.hoops.map((h) => (h ? px(h) : null)) };
+      scaled = {
+        court: px(art.court),
+        hoops: art.hoops.map((h) => (h ? px(h) : null)),
+        kids: art.kids.map((k) => (k ? px(k) : null)),
+      };
     };
 
     const resize = () => {
@@ -140,6 +145,15 @@ export default function Hoops() {
       // The sprite is rendered with the hoop centred, so a sliding hoop is the
       // same picture moved by the distance that slide projects to.
       blit(img, game.hoopX * K() * scaleAt(HOOP.z));
+    };
+
+    // Kids along the baseline. They watch, and for a moment after a basket
+    // they jump and throw their arms up.
+    const drawKids = (now) => {
+      if (!scaled?.kids[0]) return;
+      const cheering = flash && now - flash < 1500;
+      const pose = cheering && !reduced ? 1 + (Math.floor((now - flash) / 140) % 2) : (cheering ? 2 : 0);
+      blit(scaled.kids[pose] || scaled.kids[0]);
     };
 
     const drawBall = () => {
@@ -229,6 +243,7 @@ export default function Hoops() {
 
     const draw = (now) => {
       drawCourt();
+      drawKids(now);
       drawTrail();
       // Once the ball is at the ring the net hangs in front of it.
       const behindNet = ball.z > HOOP.z - HOOP.r && ball.y < HOOP.y + BALL_R * 1.5;
@@ -310,13 +325,8 @@ export default function Hoops() {
     // ---- input: flick the ball -------------------------------------------
     const pos = (e) => { const b = canvas.getBoundingClientRect(); return { sx: e.clientX - b.left, sy: e.clientY - b.top }; };
 
-    // The physics takes a pull, so a flick is handed over reversed: throwing
-    // up and to the left is the same as pulling down and to the right.
     const setAim = (cx, cy) => {
-      let dx = swipe.sx - cx, dy = cy - swipe.sy;
-      const len = Math.hypot(dx, dy), cap = maxLen();
-      if (len > cap) { dx *= cap / len; dy *= cap / len; }
-      aim = cy < swipe.sy - 8 ? aimVelocity(dx, dy, sweetLen()) : null;
+      aim = aimFromFlick(swipe.sx, swipe.sy, cx, cy, sweetLen(), maxLen());
     };
     const onDown = (e) => {
       if (game.mode !== "idle") return;
@@ -428,8 +438,7 @@ export default function Hoops() {
           </>
         ) : (
           <p className="hoops-learn-empty">
-            Two hoops unlock one AI security card. {CARDS.length} of them, built on the four sections of the TryHackMe AI1 exam and tagged with OWASP LLM Top 10 identifiers.
-            {made > 0 ? ` One more hoop for the first card.` : ""}
+            Make baskets to learn AI security. {CARDS.length} cards in order over {CARDS.length * HOOPS_PER_CARD} hoops.
           </p>
         )}
       </div>
