@@ -6,6 +6,14 @@ import { profile } from "../data.js";
 // A card every second hoop, and after this many cards the pitch appears.
 const HOOPS_PER_CARD = 2;
 const CARDS_BEFORE_PITCH = 10;
+// Once you have this many makes the hoop starts sliding, so the shot has to
+// be led rather than repeated.
+const MAKES_BEFORE_SWAY = 10;
+const SWAY = 0.85;            // metres either side of centre
+const CALLOUT = {
+  swish: "Swish", glass: "Off the glass", rim: "In off the rim",
+  short: "Short", long: "Long", wide: "Wide",
+};
 
 /* ---------------------------------------------------------------------------
    Hoops: slingshot basketball, aimed the way Angry Birds is aimed.
@@ -70,6 +78,10 @@ export default function Hoops() {
     const sweetLen = () => H * SWEET_FRAC;
     const maxLen = () => H * MAX_FRAC;
 
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let callout = null;   // { text, made, at } shown after a shot
+    let flash = 0;        // ring highlight right after a make
+    let kb = null;        // { power, side } while playing from the keyboard
     let spin = 0;         // radians the ball has rolled through in flight
     let squash = 0;       // 1 right after a floor bounce, fading out
     let lastBounces = 0;
@@ -91,7 +103,8 @@ export default function Hoops() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
-    const ro = new ResizeObserver(resize);
+    // Resizing clears the canvas, so repaint after it if the loop is paused.
+    const ro = new ResizeObserver(() => { resize(); if (!running) draw(performance.now()); });
     ro.observe(wrap);
     window.addEventListener("resize", resize);
 
@@ -148,11 +161,13 @@ export default function Hoops() {
     };
 
     const drawBoard = (t) => {
-      const a = project(-BOARD.halfW, BOARD.y1, BOARD.z), b = project(BOARD.halfW, BOARD.y0, BOARD.z);
+      const hx = game.hoopX;
+      const a = project(hx - BOARD.halfW, BOARD.y1, BOARD.z), b = project(hx + BOARD.halfW, BOARD.y0, BOARD.z);
       const x = a.sx, y = a.sy, w = b.sx - a.sx, h = b.sy - a.sy;
-      const foot = project(0, 0, BOARD.z + 0.3);
+      const foot = project(hx, 0, BOARD.z + 0.3);
+      const top = project(hx, BOARD.y0, BOARD.z);
       ctx.strokeStyle = t.line; ctx.lineWidth = Math.max(2, w * 0.03);
-      ctx.beginPath(); ctx.moveTo(W / 2, y + h); ctx.lineTo(foot.sx, foot.sy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(top.sx, y + h); ctx.lineTo(foot.sx, foot.sy); ctx.stroke();
       ctx.fillStyle = t.line; ctx.fillRect(x + w * 0.02, y + h * 0.04, w, h); // depth edge
       ctx.fillStyle = t.bg; ctx.fillRect(x, y, w, h);
       ctx.strokeStyle = t.ink; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.7;
@@ -162,7 +177,7 @@ export default function Hoops() {
     };
 
     const rimGeom = () => {
-      const c = project(HOOP.x, HOOP.y, HOOP.z);
+      const c = project(game.hoopX, HOOP.y, HOOP.z);
       const rx = HOOP.r * K() * c.s;
       return { cx: c.sx, cy: c.sy, rx, ry: rx * 0.38 };
     };
@@ -177,9 +192,9 @@ export default function Hoops() {
       const { cx, cy, rx, ry } = rimGeom();
       // The net stretches for the ball passing through it, then rebounds.
       const through = Math.max(0, Math.min(1, (HOOP.y - ball.y) / 0.9));
-      const near = Math.hypot(ball.x - HOOP.x, ball.z - HOOP.z) < HOOP.r * 1.3 && ball.vy < 0;
+      const near = Math.hypot(ball.x - game.hoopX, ball.z - HOOP.z) < HOOP.r * 1.3 && ball.vy < 0;
       const pushed = near ? through : 0;
-      const rebound = swish && now - swish < 420 ? 0.18 * Math.sin(((now - swish) / 420) * Math.PI * 2) : 0;
+      const rebound = !reduced && swish && now - swish < 420 ? 0.18 * Math.sin(((now - swish) / 420) * Math.PI * 2) : 0;
       const sw = 1 + pushed * 0.45 + rebound;
       const bulge = 1 + pushed * 0.35;
       const depth = rx * 1.15 * sw, rx2 = rx * 0.62 * bulge;
@@ -194,7 +209,8 @@ export default function Hoops() {
       ellipse(cx, cy + depth * 0.5, rx * 0.8, ry * 0.75); ctx.stroke();
       ellipse(cx, cy + depth, rx2, ry * 0.6); ctx.stroke();
       ctx.globalAlpha = 1;
-      ctx.strokeStyle = t.accent; ctx.lineWidth = Math.max(2.5, rx * 0.11);
+      const lit = flash && now - flash < 420 ? 1 - (now - flash) / 420 : 0;
+      ctx.strokeStyle = t.accent; ctx.lineWidth = Math.max(2.5, rx * 0.11) * (1 + lit * 0.9);
       ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI); ctx.stroke();
     };
 
@@ -290,11 +306,26 @@ export default function Hoops() {
       return r;
     };
 
+    // What just happened to the shot, floating up over the ring.
+    const drawCallout = (t, now) => {
+      if (!callout) return;
+      const age = now - callout.at;
+      if (age > 1100) { callout = null; return; }
+      const { cx, cy } = rimGeom();
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, 1 - age / 1100);
+      ctx.fillStyle = callout.made ? t.accent : t.muted;
+      ctx.font = `700 ${Math.max(13, W * 0.05)}px ${getComputedStyle(document.body).fontFamily}`;
+      ctx.textAlign = "center";
+      ctx.fillText(callout.text, cx, cy - W * 0.09 - (reduced ? 0 : age * 0.02));
+      ctx.restore();
+    };
+
     const drawHint = (t) => {
       if (game.mode !== "idle" || pts > 0) return;
       const p = project(START.x, START.y, START.z);
       ctx.fillStyle = t.muted; ctx.font = `600 12px ${getComputedStyle(document.body).fontFamily}`; ctx.textAlign = "center";
-      ctx.fillText("pull back and let go", p.sx, H - 12);
+      ctx.fillText(kb ? "arrows to aim, space to shoot" : "pull back and let go", p.sx, H - 12);
     };
 
     const draw = (now) => {
@@ -317,41 +348,62 @@ export default function Hoops() {
         if (nocked && pull) drawBand(t, left, p, r);           // near band, stretched
         else if (nocked) drawSlackBand(t, p, r);               // slack across the fork
       }
+      drawCallout(t, now);
       drawHint(t);
     };
 
     // ---- loop ----------------------------------------------------------
-    let raf = 0, last = performance.now();
-    const frame = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    let raf = 0, last = performance.now(), running = false;
+    // One step of the world: physics, spin, scoring and the callout. Kept
+    // apart from the loop so a test can drive it a frame at a time.
+    const update = (dt, now) => {
       const flying = game.mode === "fly";
       const was = { x: ball.x, y: ball.y, z: ball.z };
       for (let i = 0; i < 3; i++) game.step(dt / 3); // substeps keep the rim test reliable
+      if (!reduced || flying) game.advance(dt);   // the hoop keeps sliding
       if (flying) {
         // Backspin: the ball turns through the distance it travels, the way a
         // shot ball does, and a floor bounce squashes it for a moment.
         const moved = Math.hypot(ball.x - was.x, ball.y - was.y, ball.z - was.z);
         spin -= moved / (BALL_R * 2 * Math.PI) * Math.PI * 2 * 0.55;
         if (game.bounces > lastBounces) { squash = 1; lastBounces = game.bounces; }
-        trail.push({ x: ball.x, y: ball.y, z: ball.z });
+        if (!reduced) trail.push({ x: ball.x, y: ball.y, z: ball.z });
       }
       squash = Math.max(0, squash - dt * 6);
       if (trail.length > 90) trail.shift();
       if (game.scored && !tallied) {
-        tallied = true; swish = now; pts += 1; run += 1;
+        tallied = true; swish = now; flash = now; pts += 1; run += 1;
         setScore(pts); setStreak(run);
         if (pts > bestLocal) { bestLocal = pts; setBest(pts); saveNum("hoops-best", pts); }
         madeTotal += 1; setMade(madeTotal); saveNum("hoops-made", madeTotal);
+        if (madeTotal >= MAKES_BEFORE_SWAY) game.sway = SWAY;
       }
       if (game.mode === "done") {
-        if (!doneAt) { doneAt = now; if (!game.scored) { run = 0; setStreak(0); } }
+        if (!doneAt) {
+          doneAt = now;
+          callout = { text: CALLOUT[game.result] || "", made: game.scored, at: now };
+          if (!game.scored) { run = 0; setStreak(0); }
+        }
         if (now - doneAt > 700) { game.reset(); doneAt = 0; tallied = false; trail = []; spin = 0; squash = 0; lastBounces = 0; }
       }
+    };
+    const frame = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      update(dt, now);
       draw(now);
       raf = requestAnimationFrame(frame);
     };
-    raf = requestAnimationFrame(frame);
-    if (import.meta.env.DEV) window.__hoops = { game, aimVelocity, sweetLen, tick: (dt) => { game.step(dt); draw(performance.now()); } };
+    // A canvas loop that nobody is looking at is wasted battery.
+    const start = () => { if (!running) { running = true; last = performance.now(); raf = requestAnimationFrame(frame); } };
+    const stop = () => { if (running) { running = false; cancelAnimationFrame(raf); } };
+    let onScreen = true;
+    const sync = () => { if (onScreen && !document.hidden) start(); else stop(); };
+    const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; sync(); }, { threshold: 0.05 });
+    io.observe(wrap);
+    document.addEventListener("visibilitychange", sync);
+    sync();
+    draw(performance.now());   // one frame even if the loop stays paused
+    if (import.meta.env.DEV) window.__hoops = { game, aimVelocity, sweetLen, tick: (dt) => { const n = performance.now(); update(dt, n); draw(n); } };
 
     // ---- input: pull back, release -------------------------------------
     const pos = (e) => { const b = canvas.getBoundingClientRect(); return { sx: e.clientX - b.left, sy: e.clientY - b.top }; };
@@ -366,6 +418,7 @@ export default function Hoops() {
     };
     const onDown = (e) => {
       if (game.mode !== "idle") return;
+      kb = null;
       game.mode = "drag";
       const { sx, sy } = pos(e);
       setPull(sx, sy);
@@ -385,14 +438,43 @@ export default function Hoops() {
       trail = [];
       game.launch(shot);
     };
+    // Keyboard play, so the game is not mouse only.
+    const applyKb = () => {
+      const s = sweetLen();
+      pull = { dx: -kb.side * 0.4 * s, dy: kb.power * s };
+      aim = aimVelocity(pull.dx, pull.dy, s);
+      game.mode = "drag";
+    };
+    const onKey = (e) => {
+      if (game.mode === "fly" || game.mode === "done") return;
+      const k = e.key;
+      if (k === "ArrowLeft" || k === "ArrowRight" || k === "ArrowUp" || k === "ArrowDown") {
+        kb = kb || { power: 1, side: 0 };
+        if (k === "ArrowLeft") kb.side = Math.max(-1, kb.side - 0.1);
+        if (k === "ArrowRight") kb.side = Math.min(1, kb.side + 0.1);
+        if (k === "ArrowUp") kb.power = Math.min(MAX_FRAC / SWEET_FRAC, kb.power + 0.05);
+        if (k === "ArrowDown") kb.power = Math.max(0.3, kb.power - 0.05);
+        applyKb();
+        e.preventDefault();
+      } else if (k === " " || k === "Enter") {
+        if (!kb) { kb = { power: 1, side: 0 }; applyKb(); }
+        const shot = aim;
+        pull = null; aim = null;
+        if (shot) { trail = []; game.launch(shot); }
+        e.preventDefault();
+      }
+    };
+    canvas.addEventListener("keydown", onKey);
     canvas.addEventListener("pointerdown", onDown);
     canvas.addEventListener("pointermove", onMove);
     canvas.addEventListener("pointerup", onUp);
     canvas.addEventListener("pointercancel", onUp);
 
     return () => {
-      cancelAnimationFrame(raf); ro.disconnect();
+      stop(); ro.disconnect(); io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
       window.removeEventListener("resize", resize);
+      canvas.removeEventListener("keydown", onKey);
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
@@ -413,7 +495,13 @@ export default function Hoops() {
           <b>{score}</b> made{streak > 1 ? ` · ${streak} in a row` : ""}{best > 0 ? ` · best ${best}` : ""}
         </span>
       </div>
-      <canvas ref={canvasRef} className="hoops-canvas" aria-label="Basketball slingshot game: pull the ball back and release to shoot" />
+      <canvas
+        ref={canvasRef}
+        className="hoops-canvas"
+        tabIndex={0}
+        role="application"
+        aria-label="Basketball slingshot game. Drag the ball back and release to shoot, or use the arrow keys to aim and space to shoot."
+      />
       <div className="hoops-learn" aria-live="polite">
         {card ? (
           <>

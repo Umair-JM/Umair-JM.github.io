@@ -210,6 +210,7 @@ a { color: inherit; text-decoration: none; }
 .hoops-pitch { margin-top: 0.5rem !important; font-size: 0.8rem !important; color: var(--ink) !important; }
 .hoops-pitch a { color: var(--accent); border-bottom: 1px solid var(--accent); }
 .hoops-canvas:active { cursor: grabbing; }
+.hoops-canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 @media (max-width: 900px) {
   .page-wide { max-width: var(--maxw); }
   .home-grid { grid-template-columns: 1fr; }
