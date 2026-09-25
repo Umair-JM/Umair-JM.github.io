@@ -9,7 +9,7 @@ export const profile = {
   location: "Auckland, New Zealand",
   email: "umairjavaidmanj@gmail.com",
   phone: "+64 20 4483186",
-  github: "https://github.com/Umair-JM",
+  github: "https://github.com/umairjmanj",
   linkedin: "https://linkedin.com/in/umairjm",
 };
 
